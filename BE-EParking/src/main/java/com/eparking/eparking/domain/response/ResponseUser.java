@@ -4,11 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseSupplier {
-    private String phoneSupplier;
-    private String supplierName;
+public class ResponseUser {
+    private String phoneNumber;
+    private String fullName;
+    private String email;
     private String identifyCard;
+    private List<String> roleName;
+
 }

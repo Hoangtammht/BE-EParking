@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eparking.eparking.dao.ParkingMapper">
+
+    <insert id="createParking" useGeneratedKeys="true" keyProperty="parkingID" parameterType="com.eparking.eparking.domain.Parking">
+        INSERT INTO Parking (phoneNumber, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+        VALUES (#{phoneNumber}, #{methodID}, #{parkingName}, #{description}, #{images}, #{address}, #{latitude}, #{longitude}, #{pricing}, #{park}, "1");
+    </insert>
+
+    <select id="findParkingByParkingID" resultType="com.eparking.eparking.domain.Parking">
+        SELECT
+            parkingID,
+            phoneNumber,
+            methodID,
+            parkingName,
+            description,
+            images,
+            address,
+            latitude,
+            longitude,
+            pricing,
+            park,
+            status
+        FROM Parking
+        where parkingID = #{parkingID};
+    </select>
+</mapper>

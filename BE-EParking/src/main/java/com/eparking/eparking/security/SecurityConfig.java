@@ -35,12 +35,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers(
-                "/**"
+                "/user/loginUser/**",
+                "/user/registerSupplier/**",
+                "/car/**"
         ).permitAll();
-//        http.authorizeRequests().antMatchers(POST,"/user/loginUser").permitAll();
+        http.authorizeRequests().antMatchers(PUT,"/user/updateUser").permitAll();
+        http.authorizeRequests().antMatchers(POST,"/parking/createParking").hasAnyAuthority("ROLE_SUPPLIER");
         http.authorizeRequests().anyRequest().authenticated();
-//        http.addFilter(customAuthenticationFilter);
-//        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilter(customAuthenticationFilter);
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

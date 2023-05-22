@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eparking.eparking.dao.CarDetailMapper">
+
+    <resultMap id = "resultCarDetail" type = "com.eparking.eparking.domain.CarDetail">
+        <result property = "carID" column = "carID"/>
+        <result property = "phoneNumber" column = "phoneNumber"/>
+        <result property = "licensePlate" column = "licensePlate"/>
+    </resultMap>
+
+    <select id="findCarDetailByPhoneNumber" resultType="com.eparking.eparking.domain.CarDetail">
+        SELECT
+            carID,
+            phoneNumber,
+            licensePlate
+        FROM CarDetail
+        where phoneNumber = #{phoneNumber};
+    </select>
+
+    <insert id="addCar" useGeneratedKeys="true" keyProperty="carID" parameterType="com.eparking.eparking.domain.CarDetail" >
+        Insert into CarDetail (phoneNumber, licensePlate)
+        values (#{phoneNumber},#{licensePlate})
+    </insert>
+
+    <delete id = "removeCar" parameterType = "com.eparking.eparking.domain.CarDetail">
+        DELETE from CarDetail WHERE carID = #{carID};
+    </delete>
+
+</mapper>

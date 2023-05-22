@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eparking.eparking.dao.UserMapper">
+
+    <select id="findUserByPhoneNumber" resultType="com.eparking.eparking.domain.User">
+        SELECT
+            phoneNumber,
+            password,
+            fullName,
+            email,
+            identifyCard
+        FROM User
+        where phoneNumber = #{phoneNumber};
+    </select>
+
+    <select id="findResponseUserByPhone" resultType="com.eparking.eparking.domain.response.ResponseUser">
+        SELECT
+            User.phoneNumber,
+            fullName,
+            email,
+            identifyCard
+        FROM User
+        WHERE User.phoneNumber = #{phoneNumber}
+    </select>
+
+    <update id="updateUserByPhoneNumber" parameterType = "com.eparking.eparking.domain.User">
+        UPDATE User SET
+            fullName = #{fullName},
+            email = #{email},
+            identifyCard = #{identifyCard}
+        WHERE phoneNumber = #{phoneNumber};
+    </update>
+
+    <insert id="createSupplier"  parameterType="com.eparking.eparking.domain.User" >
+        Insert into User (phoneNumber, password, fullName, email, identifyCard)
+        values (#{phoneNumber},#{password},#{fullName},#{email},#{identifyCard})
+    </insert>
+</mapper>
