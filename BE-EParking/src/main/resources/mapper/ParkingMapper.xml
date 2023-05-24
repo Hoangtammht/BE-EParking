@@ -10,11 +10,11 @@
         VALUES (#{phoneNumber}, #{methodID}, #{parkingName}, #{description}, #{images}, #{address}, #{latitude}, #{longitude}, #{pricing}, #{park}, "1");
     </insert>
 
-    <select id="findParkingByParkingID" resultType="com.eparking.eparking.domain.Parking">
+    <select id="findParkingByParkingID" resultType="com.eparking.eparking.domain.response.ResponseParking">
         SELECT
             parkingID,
             phoneNumber,
-            methodID,
+            methodName,
             parkingName,
             description,
             images,
@@ -24,7 +24,63 @@
             pricing,
             park,
             status
-        FROM Parking
-        where parkingID = #{parkingID};
+        FROM Parking P, Method M
+        where P.methodID = M.methodID and parkingID = #{parkingID};
     </select>
+
+    <select id="getListParking" resultType="com.eparking.eparking.domain.response.ResponseParking">
+        SELECT
+        parkingID,
+        phoneNumber,
+        methodName,
+        parkingName,
+        description,
+        images,
+        address,
+        latitude,
+        longitude,
+        pricing,
+        park,
+        status
+        FROM Parking P, Method M
+        WHERE P.methodID = M.methodID
+        ORDER BY parkingID
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="getNumberOfParkings" resultType="java.lang.Long">
+        SELECT COUNT(parkingID) FROM Parking
+    </select>
+
+    <insert id="addDatesForParking" parameterType="java.util.List">
+        INSERT INTO ParkingDate(dateOfWeekID, parkingID, offerDate)
+        VALUES
+        <foreach item="parkingDate" collection="list" separator=",">
+            (#{parkingDate.dateOfWeekID}, #{parkingDate.parkingID}, #{parkingDate.offerDate})
+        </foreach>
+    </insert>
+
+    <insert id="addSpecialDatesForParking" parameterType="java.util.List">
+        INSERT INTO ParkingSpecialDate (specialDateID, parkingID, offerSpecialDate)
+        VALUES
+        <foreach item="parkingSpecialDate" collection="list" separator=",">
+            (#{parkingSpecialDate.specialDateID}, #{parkingSpecialDate.parkingID}, #{parkingSpecialDate.offerSpecialDate})
+        </foreach>
+    </insert>
+
+    <select id="showDatesOfParking" resultType="com.eparking.eparking.domain.ParkingDate">
+        SELECT
+            dateOfWeekID,
+            parkingID,
+            offerDate
+        FROM ParkingDate
+            where parkingID = #{parkingID};
+    </select>
+
+    <insert id="createSpecialDate" useGeneratedKeys="true" keyProperty="specialDateID" parameterType="com.eparking.eparking.domain.SpecialDate">
+        INSERT INTO SpecialDate (specialDateID, startSpecialDate, endSpecialDate)
+        VALUES (#{specialDateID}, #{startSpecialDate}, #{endSpecialDate});
+    </insert>
+
+
 </mapper>
