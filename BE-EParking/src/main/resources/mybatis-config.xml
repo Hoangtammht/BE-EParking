@@ -17,5 +17,9 @@
 
     <mapper resource="mapper/ParkingMapper.xml"></mapper>
 
+    <mapper resource="mapper/DateMapper.xml"></mapper>
+
+    <mapper resource="mapper/SpecialDateMapper.xml"></mapper>
+
 </mappers>
 </configuration>

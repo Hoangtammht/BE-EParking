@@ -1,10 +1,13 @@
 package com.eparking.eparking.controller;
 
 import com.eparking.eparking.domain.CarDetail;
+import com.eparking.eparking.domain.response.ResponseCarInParking;
+import com.eparking.eparking.domain.resquest.RequestCarsInParking;
 import com.eparking.eparking.domain.resquest.ResquestCar;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.CarDetailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +51,20 @@ public class CarController {
         }
     }
 
+    @GetMapping("/showCarsInParkingByStatus")
+    public ResponseEntity<Page<ResponseCarInParking>> showCarsInParkingByStatus(
+            @RequestBody RequestCarsInParking requestCarsInParking,
+            HttpServletResponse response,
+            HttpServletRequest request) {
+        try {
+            int status = requestCarsInParking.getStatus();
+            int page = requestCarsInParking.getPage();
+            int size = requestCarsInParking.getSize();
+            Page<ResponseCarInParking> carInParkings = carDetailService.findCarsInParkingByStatus(status, page, size);
+            return ResponseEntity.ok(carInParkings);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
 
 }

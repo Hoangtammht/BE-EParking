@@ -82,10 +82,8 @@ public class ParkingController {
                                                             HttpServletResponse response,
                                                             HttpServletRequest request) {
         try {
-            URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/parking/getProfileParking")
-                    .toUriString());
             ResponseParking parkingDetail = parkingService.getParkingDetail(parkingID);
-            return ResponseEntity.created(uri).body(parkingDetail);
+            return ResponseEntity.ok(parkingDetail);
         } catch (ApiRequestException e) {
             throw e;
         }
@@ -98,10 +96,8 @@ public class ParkingController {
             HttpServletResponse response,
             HttpServletRequest request) {
         try {
-            URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/parking/getListParking")
-                    .toUriString());
             Page<ResponseParking> parkingPage = parkingService.getListParking(page, size);
-            return ResponseEntity.created(uri).body(parkingPage);
+            return ResponseEntity.ok(parkingPage);
         } catch (ApiRequestException e) {
             throw e;
         }
