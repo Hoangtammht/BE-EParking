@@ -11,6 +11,18 @@
         <result property = "licensePlate" column = "licensePlate"/>
     </resultMap>
 
+    <resultMap id="responseCarInParkingMap" type="com.eparking.eparking.domain.response.ResponseCarInParking">
+        <result property="phoneNumber" column="phoneNumber" />
+        <result property="licensePlate" column="licensePlate" />
+        <result property="statusName" column="statusName" />
+        <result property="methodID" column="methodID" />
+        <result property="methodName" column="methodName" />
+        <result property="startDateTime" column="startDateTime" />
+        <result property="endDatetime" column="endDatetime" />
+        <result property="pricing" column="pricing" />
+        <result property="totalPrice" column="totalPrice" />
+    </resultMap>
+
     <select id="findCarDetailByPhoneNumber" resultType="com.eparking.eparking.domain.CarDetail">
         SELECT
             carID,
@@ -28,5 +40,21 @@
     <delete id = "removeCar" parameterType = "com.eparking.eparking.domain.CarDetail">
         DELETE from CarDetail WHERE carID = #{carID};
     </delete>
+
+    <select id="findCarsInParkingByStatus" resultMap="responseCarInParkingMap">
+        SELECT cd.phoneNumber, cd.licensePlate, rs.statusName, m.methodID, m.methodName,
+        r.startDateTime, r.endDatetime, p.pricing, r.totalPrice
+        FROM CarDetail cd
+        INNER JOIN Reservation r ON cd.carID = r.carID
+        INNER JOIN ReservationStatus rs ON r.statusID = rs.statusID
+        INNER JOIN Parking p ON r.parkingID = p.parkingID
+        INNER JOIN Method m ON m.methodID = p.methodID
+        WHERE rs.statusID = #{status}
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="getNumberOfReservationByStatus" resultType="java.lang.Long">
+        SELECT COUNT(reserveID) FROM Reservation WHERE statusID = #{status};
+    </select>
 
 </mapper>
