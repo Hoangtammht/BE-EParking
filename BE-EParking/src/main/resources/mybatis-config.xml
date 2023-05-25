@@ -17,5 +17,8 @@
 
     <mapper resource="mapper/ParkingMapper.xml"></mapper>
 
+    <mapper resource="mapper/CartMapper.xml"></mapper>
+
+    <mapper resource="mapper/ReservationMapper.xml"></mapper>
 </mappers>
 </configuration>
