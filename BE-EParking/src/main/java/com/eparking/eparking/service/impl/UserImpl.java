@@ -81,7 +81,7 @@ public class UserImpl implements UserDetailsService, UserService {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userMapper.createSupplier(user);
-            roleService.insertUserRole(1, user.getPhoneNumber());
+            roleService.insertUserRole(1, user.getUserID());
         } catch (Exception e) {
             throw new ApiRequestException("Failed to create supplier: " + e);
         }

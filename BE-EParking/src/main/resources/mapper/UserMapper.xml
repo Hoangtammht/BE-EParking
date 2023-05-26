@@ -7,6 +7,7 @@
 
     <select id="findUserByPhoneNumber" resultType="com.eparking.eparking.domain.User">
         SELECT
+            userID,
             phoneNumber,
             password,
             fullName,
@@ -34,7 +35,7 @@
         WHERE phoneNumber = #{phoneNumber};
     </update>
 
-    <insert id="createSupplier"  parameterType="com.eparking.eparking.domain.User" >
+    <insert id="createSupplier" useGeneratedKeys="true" keyProperty="userID" parameterType="com.eparking.eparking.domain.User" >
         Insert into User (phoneNumber, password, fullName, email, identifyCard)
         values (#{phoneNumber},#{password},#{fullName},#{email},#{identifyCard})
     </insert>

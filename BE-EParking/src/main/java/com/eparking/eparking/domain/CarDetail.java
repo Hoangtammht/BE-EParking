@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CarDetail {
     private int carID;
-    private String phoneNumber;
+    private int userID;
     private String licensePlate;
 
 }

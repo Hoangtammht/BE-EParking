@@ -23,18 +23,18 @@
         <result property="totalPrice" column="totalPrice" />
     </resultMap>
 
-    <select id="findCarDetailByPhoneNumber" resultType="com.eparking.eparking.domain.CarDetail">
+    <select id="findCarDetailByUserID" resultType="com.eparking.eparking.domain.response.ResponseCarDetail">
         SELECT
             carID,
             phoneNumber,
             licensePlate
-        FROM CarDetail
-        where phoneNumber = #{phoneNumber};
+        FROM CarDetail C, User U
+        where C.userID = U.userID and U.userID = #{userID};
     </select>
 
     <insert id="addCar" useGeneratedKeys="true" keyProperty="carID" parameterType="com.eparking.eparking.domain.CarDetail" >
-        Insert into CarDetail (phoneNumber, licensePlate)
-        values (#{phoneNumber},#{licensePlate})
+        Insert into CarDetail (userID, licensePlate)
+        values (#{userID},#{licensePlate})
     </insert>
 
     <delete id = "removeCar" parameterType = "com.eparking.eparking.domain.CarDetail">
@@ -42,13 +42,14 @@
     </delete>
 
     <select id="findCarsInParkingByStatus" resultMap="responseCarInParkingMap">
-        SELECT cd.phoneNumber, cd.licensePlate, rs.statusName, m.methodID, m.methodName,
+        SELECT U.phoneNumber, cd.licensePlate, rs.statusName, m.methodID, m.methodName,
         r.startDateTime, r.endDatetime, p.pricing, r.totalPrice
         FROM CarDetail cd
         INNER JOIN Reservation r ON cd.carID = r.carID
         INNER JOIN ReservationStatus rs ON r.statusID = rs.statusID
         INNER JOIN Parking p ON r.parkingID = p.parkingID
         INNER JOIN Method m ON m.methodID = p.methodID
+        INNER JOIN User u ON u.userID = cd.userID
         WHERE rs.statusID = #{status}
         LIMIT #{size} OFFSET #{offset}
     </select>

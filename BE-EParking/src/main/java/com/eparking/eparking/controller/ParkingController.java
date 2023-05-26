@@ -1,6 +1,7 @@
 package com.eparking.eparking.controller;
 
 import com.eparking.eparking.domain.*;
+import com.eparking.eparking.domain.response.RequestListParking;
 import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ParkingService;
@@ -91,11 +92,12 @@ public class ParkingController {
 
     @GetMapping("/getListParking")
     public ResponseEntity<Page<ResponseParking>> getListParking(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "2") int size,
+            @RequestBody RequestListParking requestListParking,
             HttpServletResponse response,
             HttpServletRequest request) {
         try {
+            int page = requestListParking.getPage();
+            int size = requestListParking.getSize();
             Page<ResponseParking> parkingPage = parkingService.getListParking(page, size);
             return ResponseEntity.ok(parkingPage);
         } catch (ApiRequestException e) {

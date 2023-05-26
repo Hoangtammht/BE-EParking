@@ -7,15 +7,17 @@
 
     <select id="findRoleByPhoneNumber" resultType="com.eparking.eparking.domain.UserRole">
         SELECT
-        Role.roleName,
-        phoneNumber
-        FROM UserRole, Role
-        where UserRole.roleID = Role.roleID and phoneNumber = #{phoneNumber}
+            Role.roleName,
+            User.phoneNumber
+        FROM UserRole, Role, User
+            Where UserRole.roleID = Role.roleID and
+            UserRole.userID = User.userID and
+            User.phoneNumber =  #{phoneNumber}
     </select>
 
     <insert id="insertUserRole" parameterType="com.eparking.eparking.domain.UserRole" >
-        Insert into UserRole (roleID, phoneNumber)
-        values (#{roleID},#{phoneNumber})
+        Insert into UserRole (roleID, userID)
+        values (#{roleID},#{userID})
     </insert>
 
 </mapper>

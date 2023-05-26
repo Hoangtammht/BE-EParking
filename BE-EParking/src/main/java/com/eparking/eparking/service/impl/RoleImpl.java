@@ -20,7 +20,7 @@ public class RoleImpl implements RoleService {
     }
 
     @Override
-    public void insertUserRole(int roleID, String phoneNumber) {
-        roleMapper.insertUserRole(roleID, phoneNumber);
+    public void insertUserRole(int roleID, int userID) {
+        roleMapper.insertUserRole(roleID, userID);
     }
 }

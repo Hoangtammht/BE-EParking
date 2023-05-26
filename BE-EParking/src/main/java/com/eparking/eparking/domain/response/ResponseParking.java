@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseParking {
     private int parkingID;
+    private int userID;
     private String phoneNumber;
     private String methodName;
     private String parkingName;

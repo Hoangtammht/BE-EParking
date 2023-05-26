@@ -2,6 +2,7 @@ package com.eparking.eparking.service.impl;
 
 import com.eparking.eparking.dao.CarDetailMapper;
 import com.eparking.eparking.domain.CarDetail;
+import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseCarInParking;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.CarDetailService;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
@@ -24,10 +26,11 @@ public class CarDetailImpl implements CarDetailService {
     private final CarDetailMapper carDetailMapper;
 
     @Override
-    public List<CarDetail> addCar(CarDetail carDetail) {
+    @Transactional
+    public List<ResponseCarDetail> addCar(CarDetail carDetail) {
         try {
             carDetailMapper.addCar(carDetail);
-            return carDetailMapper.findCarDetailByPhoneNumber(carDetail.getPhoneNumber());
+            return carDetailMapper.findCarDetailByUserID(carDetail.getUserID());
         } catch (Exception e) {
             // Handle the exception appropriately
             throw new RuntimeException("Failed to add car");

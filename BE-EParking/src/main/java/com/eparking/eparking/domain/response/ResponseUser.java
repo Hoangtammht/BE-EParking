@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseUser {
+    private int userID;
     private String phoneNumber;
     private String fullName;
     private String email;

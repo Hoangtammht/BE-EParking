@@ -9,14 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateUser {
     private String phoneNumber;
-
     private String password;
-
     private String fullName;
-
     private String email;
-
     private String identifyCard;
-
 
 }
