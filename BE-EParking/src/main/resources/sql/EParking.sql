@@ -1,384 +1,227 @@
--- MySQL dump 10.13  Distrib 8.0.30, for Win64 (x86_64)
---
--- Host: localhost    Database: eparking
--- ------------------------------------------------------
--- Server version	8.0.30
+CREATE DATABASE EParking;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE TABLE Method (
+    methodID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    methodName varchar(255) NOT NULL
+);
 
---
--- Table structure for table `cardetail`
---
+CREATE TABLE Date (
+    dateOfWeekID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    dateOfWeek varchar(255) NOT NULL
+);
 
-DROP TABLE IF EXISTS `cardetail`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `cardetail` (
-  `carID` int NOT NULL AUTO_INCREMENT,
-  `phoneNumber` varchar(10) NOT NULL,
-  `licensePlate` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`carID`),
-  KEY `FK_CustomerCar` (`phoneNumber`),
-  CONSTRAINT `FK_CustomerCar` FOREIGN KEY (`phoneNumber`) REFERENCES `user` (`phoneNumber`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE SpecialDate (
+    specialDateID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    startSpecialDate TIMESTAMP,
+    endSpecialDate TIMESTAMP
+);
 
---
--- Dumping data for table `cardetail`
---
+CREATE TABLE Parking (
+    parkingID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    userID int NOT NULL,
+    methodID int NOT NULL,
+    parkingName nvarchar(256),
+    description nvarchar(3000),
+    images nvarchar(3000),
+    address nvarchar(1000),
+	latitude decimal(10,6),
+    longitude decimal(10,6),
+    pricing int,
+    park int,
+    status int
+);
 
-LOCK TABLES `cardetail` WRITE;
-/*!40000 ALTER TABLE `cardetail` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cardetail` ENABLE KEYS */;
-UNLOCK TABLES;
+CREATE TABLE ParkingDate (
+    dateOfWeekID int NOT NULL,
+    parkingID int NOT NULL,
+    offerDate double
+);
 
---
--- Table structure for table `date`
---
+CREATE TABLE ParkingSpecialDate (
+    specialDateID int NOT NULL,
+    parkingID int NOT NULL,
+    offerSpecialDate double
+);
 
-DROP TABLE IF EXISTS `date`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `date` (
-  `dateOfWeekID` int NOT NULL AUTO_INCREMENT,
-  `dateOfWeek` varchar(255) NOT NULL,
-  PRIMARY KEY (`dateOfWeekID`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE Role (
+    roleID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    roleName varchar(50) NOT NULL
+);
 
---
--- Dumping data for table `date`
---
+CREATE TABLE UserRole (
+    roleID int NOT NULL,
+    userID int NOT NULL
+);
 
-LOCK TABLES `date` WRITE;
-/*!40000 ALTER TABLE `date` DISABLE KEYS */;
-INSERT INTO `date` VALUES (1,'Monday'),(2,'Tuesday'),(3,'Wednesday'),(4,'Thursday'),(5,'Friday'),(6,'Saturday'),(7,'Sunday');
-/*!40000 ALTER TABLE `date` ENABLE KEYS */;
-UNLOCK TABLES;
+CREATE TABLE User (
+	userID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    phoneNumber varchar(10) NOT NULL unique,
+    password varchar(200),
+    fullName nvarchar(256),
+    email varchar(100),
+    identifyCard varchar(20)
+);
 
---
--- Table structure for table `method`
---
+CREATE TABLE CarDetail (
+    carID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    userID int NOT NULL,
+    licensePlate varchar(20)
+);
 
-DROP TABLE IF EXISTS `method`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `method` (
-  `methodID` int NOT NULL AUTO_INCREMENT,
-  `methodName` varchar(255) NOT NULL,
-  PRIMARY KEY (`methodID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE PaymentDetail (
+    paymentID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    reserveID int NOT NULL unique,
+    paymentName nvarchar(100),
+    paymentDateTime timestamp
+);
 
---
--- Dumping data for table `method`
---
+CREATE TABLE ReservationStatus (
+    statusID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    statusName nvarchar(100)
+);
 
-LOCK TABLES `method` WRITE;
-/*!40000 ALTER TABLE `method` DISABLE KEYS */;
-INSERT INTO `method` VALUES (1,'Hours'),(2,'Slot');
-/*!40000 ALTER TABLE `method` ENABLE KEYS */;
-UNLOCK TABLES;
+CREATE TABLE Reservation (
+    reserveID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    userID int NOT NULL,
+    parkingID int NOT NULL,
+	statusID int NOT NULL,
+    carID int NOT NULL,
+    startDateTime timestamp,
+    endDatetime timestamp,
+    totalPrice int
+);
 
---
--- Table structure for table `parking`
---
+-- FK_Parking
+ALTER TABLE Parking ADD CONSTRAINT FK_SupplierParking FOREIGN KEY (userID) REFERENCES User(userID);
+ALTER TABLE Parking ADD CONSTRAINT FK_MethodParking FOREIGN KEY (methodID) REFERENCES Method(methodID);
 
-DROP TABLE IF EXISTS `parking`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `parking` (
-  `parkingID` int NOT NULL AUTO_INCREMENT,
-  `phoneNumber` varchar(10) NOT NULL,
-  `methodID` int DEFAULT NULL,
-  `parkingName` varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `description` varchar(3000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `images` varchar(3000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `address` varchar(1000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `latitude` decimal(10,6) DEFAULT NULL,
-  `longitude` decimal(10,6) DEFAULT NULL,
-  `pricing` int DEFAULT NULL,
-  `park` int DEFAULT NULL,
-  `status` int DEFAULT NULL,
-  PRIMARY KEY (`parkingID`),
-  KEY `FK_SupplierParking` (`phoneNumber`),
-  KEY `FK_MethodParking` (`methodID`),
-  CONSTRAINT `FK_MethodParking` FOREIGN KEY (`methodID`) REFERENCES `method` (`methodID`),
-  CONSTRAINT `FK_SupplierParking` FOREIGN KEY (`phoneNumber`) REFERENCES `user` (`phoneNumber`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- FK_ParkingDate
+ALTER TABLE ParkingDate ADD CONSTRAINT FK_ParkingDate FOREIGN KEY (parkingID) REFERENCES Parking(parkingID);
+ALTER TABLE ParkingDate ADD CONSTRAINT FK_DateParking FOREIGN KEY (dateOfWeekID) REFERENCES Date(dateOfWeekID);
 
---
--- Dumping data for table `parking`
---
+-- FK_ParkingSpecialDate
+ALTER TABLE ParkingSpecialDate ADD CONSTRAINT FK_ParkingSpecialDate FOREIGN KEY (parkingID) REFERENCES Parking(parkingID);
+ALTER TABLE ParkingSpecialDate ADD CONSTRAINT FK_SpecialDateParking FOREIGN KEY (specialDateID) REFERENCES SpecialDate(specialDateID);
 
-LOCK TABLES `parking` WRITE;
-/*!40000 ALTER TABLE `parking` DISABLE KEYS */;
-INSERT INTO `parking` VALUES (1,'0946219139',1,'Romantic A','This is the good parking','https://lirp.cdn-website.com/md/unsplash/dms3rep/multi/opt/photo-1506521781263-d8422e82f27a-1920w.jpg','123 Example Street',37.123456,-122.123456,100000,8,1),(2,'0946219139',2,'Romantic B','This is the good parking 1','https://lirp.cdn-website.com/md/unsplash/dms3rep/multi/opt/photo-1506521781263-d8422e82f27a-1920w.jpg','xyz Example Street',37.123456,-122.123456,100000,8,1),(3,'0946219139',2,'Romantic C','This is the good parking 2','https://lirp.cdn-website.com/md/unsplash/dms3rep/multi/opt/photo-1506521781263-d8422e82f27a-1920w.jpg','abc Example Street',37.123456,-122.123456,50000,8,1);
-/*!40000 ALTER TABLE `parking` ENABLE KEYS */;
-UNLOCK TABLES;
+-- FK_CarDetail
+ALTER TABLE CarDetail ADD CONSTRAINT FK_CustomerCar FOREIGN KEY (userID) REFERENCES User(userID);
 
---
--- Table structure for table `parkingdate`
---
+-- FK_Reservation
+ALTER TABLE Reservation ADD CONSTRAINT FK_CustomerReservation FOREIGN KEY (userID) REFERENCES User(userID);
+ALTER TABLE Reservation ADD CONSTRAINT FK_ParkingReservation FOREIGN KEY (parkingID) REFERENCES Parking(parkingID);
+ALTER TABLE Reservation ADD CONSTRAINT FK_StatusReservation FOREIGN KEY (statusID) REFERENCES ReservationStatus(statusID);
+ALTER TABLE Reservation ADD CONSTRAINT FK_CarReservation FOREIGN KEY (carID) REFERENCES CarDetail(carID);
 
-DROP TABLE IF EXISTS `parkingdate`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `parkingdate` (
-  `dateOfWeekID` int NOT NULL,
-  `parkingID` int NOT NULL,
-  `offerDate` double DEFAULT NULL,
-  KEY `FK_ParkingDate` (`parkingID`),
-  KEY `FK_DateParking` (`dateOfWeekID`),
-  CONSTRAINT `FK_DateParking` FOREIGN KEY (`dateOfWeekID`) REFERENCES `date` (`dateOfWeekID`),
-  CONSTRAINT `FK_ParkingDate` FOREIGN KEY (`parkingID`) REFERENCES `parking` (`parkingID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- FK_Payment
+ALTER TABLE PaymentDetail ADD CONSTRAINT FK_ReservationPayment FOREIGN KEY (reserveID) REFERENCES Reservation(reserveID);
 
---
--- Dumping data for table `parkingdate`
---
+-- FK-Role
+ALTER TABLE UserRole ADD CONSTRAINT FK_UserRole FOREIGN KEY (userID) REFERENCES User(userID);
+ALTER TABLE UserRole ADD CONSTRAINT FK_RoleUser FOREIGN KEY (roleID) REFERENCES Role(roleID);
 
-LOCK TABLES `parkingdate` WRITE;
-/*!40000 ALTER TABLE `parkingdate` DISABLE KEYS */;
-INSERT INTO `parkingdate` VALUES (1,1,0.4),(2,1,0.5),(3,1,0.7);
-/*!40000 ALTER TABLE `parkingdate` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO User(phoneNumber, password, fullName, email, identifyCard)
+VALUES ("0123456789", "$2a$10$CovsRO2OYukwwURjLe1uGOYI1/z7jpjiKswqZfOK2.egrU2HGSzEi", "Admin Parking", "admin@gmail.com", "111111111111");
+INSERT INTO User(phoneNumber, password, fullName, email, identifyCard)
+VALUES ("0946219139", "$2a$10$CovsRO2OYukwwURjLe1uGOYI1/z7jpjiKswqZfOK2.egrU2HGSzEi", "Hoang Tam", "hoangtammht@gmail.com", "111111111111");
 
---
--- Table structure for table `parkingspecialdate`
---
+INSERT INTO Role(roleName)
+VALUES ("ROLE_SUPPLIER");
+INSERT INTO Role(roleName)
+VALUES ("ROLE_CUSTOMER");
 
-DROP TABLE IF EXISTS `parkingspecialdate`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `parkingspecialdate` (
-  `specialDateID` int NOT NULL,
-  `parkingID` int NOT NULL,
-  `offerSpecialDate` double DEFAULT NULL,
-  KEY `FK_ParkingSpecialDate` (`parkingID`),
-  KEY `FK_SpecialDateParking` (`specialDateID`),
-  CONSTRAINT `FK_ParkingSpecialDate` FOREIGN KEY (`parkingID`) REFERENCES `parking` (`parkingID`),
-  CONSTRAINT `FK_SpecialDateParking` FOREIGN KEY (`specialDateID`) REFERENCES `specialdate` (`specialDateID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO UserRole(roleID, userID)
+VALUES (1, 1);
+INSERT INTO UserRole(roleID, userID)
+VALUES (1, 2);
+INSERT INTO UserRole(roleID, userID)
+VALUES (2, 2);
 
---
--- Dumping data for table `parkingspecialdate`
---
+INSERT INTO Method(methodName)
+VALUES ("Hours");
+INSERT INTO Method(methodName)
+VALUES ("Slot");
 
-LOCK TABLES `parkingspecialdate` WRITE;
-/*!40000 ALTER TABLE `parkingspecialdate` DISABLE KEYS */;
-INSERT INTO `parkingspecialdate` VALUES (1,1,0.4),(2,1,0.5),(3,1,0.7);
-/*!40000 ALTER TABLE `parkingspecialdate` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO Date (dateOfWeek) VALUES ('Monday');
+INSERT INTO Date (dateOfWeek) VALUES ('Tuesday');
+INSERT INTO Date (dateOfWeek) VALUES ('Wednesday');
+INSERT INTO Date (dateOfWeek) VALUES ('Thursday');
+INSERT INTO Date (dateOfWeek) VALUES ('Friday');
+INSERT INTO Date (dateOfWeek) VALUES ('Saturday');
+INSERT INTO Date (dateOfWeek) VALUES ('Sunday');
 
---
--- Table structure for table `paymentdetail`
---
+INSERT INTO CarDetail (userID, licensePlate)
+VALUES (2, '60A-000000');
+INSERT INTO CarDetail (userID, licensePlate)
+VALUES (2, '60A-111111');
+INSERT INTO CarDetail (userID, licensePlate)
+VALUES (2, '60A-222222');
+INSERT INTO CarDetail (userID, licensePlate)
+VALUES (2, '60A-333333');	
+INSERT INTO CarDetail (userID, licensePlate)
+VALUES (2, '60A-444444');
+INSERT INTO CarDetail (userID, licensePlate)
+VALUES (2, '60A-555555');
 
-DROP TABLE IF EXISTS `paymentdetail`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `paymentdetail` (
-  `paymentID` int NOT NULL AUTO_INCREMENT,
-  `paymentName` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `paymentDateTime` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`paymentID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO ReservationStatus (statusName) VALUES ('Present');
+INSERT INTO ReservationStatus (statusName) VALUES ('Coming');
+INSERT INTO ReservationStatus (statusName) VALUES ('Departed');
 
---
--- Dumping data for table `paymentdetail`
---
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 1, 'Khách sạn Sheraton Saigon', 'A convenient parking space', 'https://mrvu-fan.com/wp-content/uploads/2019/08/du-an-quat-tran-sheraton-sai-gon.png', '123 Example Street', 10.775667422143378, 106.70387789625266, 50000, 8, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 1, 'Khách sạn Renaissance Riverside', 'A convenient parking space', 'https://cdn2.vietnambooking.com/wp-content/uploads/hotel_pro/hotel_346765/75192f35e6aaf258c274ce3bdb298787.jpg', '456 Example Avenue', 10.77464240228887, 106.70612635207664, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 1, 'Khách sạn Hotel Grand Saigon', 'A convenient parking space', 'https://ticotravel.com.vn/wp-content/uploads/2022/03/saigon-grand-hotel-1-1.jpg', '456 Example Avenue', 10.774391924567361, 106.70532363858239, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 1, 'Khách sạn Caravelle Saigon', 'A convenient parking space', 'https://saigontourist.com.vn/files/images/luu-tru/caravelle-saigon-hotel.jpg', '456 Example Avenue', 10.77699946262414, 106.70362352508788, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'Khách sạn LOTTE Saigon', 'A convenient parking space', 'https://www.lottehotel.com/content/dam/lotte-hotel/lotte/saigon/main/4361-02-2000-acc-LTHO.jpg.thumb.768.768.jpg', '456 Example Avenue', 10.778832301169551, 106.70680668275817, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 1, 'Khách sạn Silverland Jolie', 'A convenient parking space', 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/238499125.jpg?k=9c030ce3aafb689ad4f1537b04e07e5a649f48bf7b93d97dce4d480c701ca0e0&o=&hp=1', '456 Example Avenue', 10.777636558242277, 106.70591899625275, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 1, "Nhat Ha L'Opera", 'A convenient parking space', 'https://pix10.agoda.net/hotelImages/289633/-1/84e7b9784153b4909bddfbe06500b573.jpg?ca=15&ce=1&s=768x1024', '456 Example Avenue', 10.778666284861046, 106.70455325392311, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'Vincom Center Đồng Khởi', 'A convenient parking space', 'https://vinhomecentralpark.com/wp-content/uploads/2021/06/Vincom-Dong-Khoi-Q1-1024x681.jpg', '456 Example Avenue', 10.778370032330068, 106.70185076237932, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'New World Sài Gòn', 'A convenient parking space', 'https://saigon.newworldhotels.com/wp-content/uploads/sites/18/2014/05/NWSGN-Driveway1.jpg', '456 Example Avenue', 10.77120828653991, 106.69469895207673, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 1, 'Khách sạn PullMan', 'A convenient parking space', 'https://pix10.agoda.net/hotelImages/21648431/0/05101a9abe327741da996a59a697e14b.jpg?ca=17&ce=1&s=1024x768', '456 Example Avenue', 10.764545290278374, 106.69163380974705, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'Nhà khách Phương Nam', 'A convenient parking space', 'https://thienhatravel.vn/pic/New/images/hcm/nha-khach-phuong-nam.jpg', '456 Example Avenue', 10.76296629918281, 106.6863860989247, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'Nhà khách Xuân Thu', 'A convenient parking space', 'https://image-tc.galaxy.tf/wijpeg-1w03tpxgow8ozi13a1zgo9ueo/vincom-center-copy-orig_standard.jpg?crop=34%2C0%2C533%2C400', '456 Example Avenue', 10.760149062103876, 106.68875306608857, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 1, 'A IN HOTEL DEL LUNA', 'A convenient parking space', 'https://pix10.agoda.net/hotelImages/36114319/0/b87323b22ccf561ade150402e491e9cd.jpg?ce=0&s=1024x768', '456 Example Avenue', 10.765147849967287, 106.69507275392291, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 1, 'Yellow House Saigon', 'A convenient parking space', 'https://media.tacdn.com/media/attractions-splice-spp-674x446/0a/78/a2/ca.jpg', '456 Example Avenue', 10.765234249772051, 106.69576280974695, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'Bitexco Tower', 'A convenient parking space', 'https://upload.wikimedia.org/wikipedia/commons/c/c4/DJI_0550-HDR-Pano_Bitexco_Financial_Tower.jpg', '456 Example Avenue', 10.771776721629644, 106.70436531657624, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'Takashimaya', 'A convenient parking space', 'https://cdn3.dhht.vn/wp-content/uploads/2023/02/takashimaya-co-nhung-thuong-hieu-nao-co-gi-an-choi-gi-bia.jpg', '456 Example Avenue', 10.773356663584561, 106.70057360974712, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'Tòa nhà Ree Tower', 'A convenient parking space', 'https://maisonoffice.vn/wp-content/uploads/2021/09/toa-nha-ree-tower-doan-van-bo.jpg', '456 Example Avenue', 10.764980069876904, 106.70245826741746, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'WeWork E. Town Central', 'A convenient parking space', 'https://5office.vn/wp-content/uploads/2021/05/wework-etown-central-doan-van-bo-quan-4-van-phong-tron-goi-5office.vn-bia.jpg', '456 Example Avenue', 10.765338171480833, 106.70297458275807, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'La Vela Saigon Hotel', 'A convenient parking space', 'https://reviewvilla.vn/wp-content/uploads/2022/04/La-Vela-Saigon-Hotel-1.jpg', '456 Example Avenue', 10.788934269152277, 106.68541715207702, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 1, 'Saigon Prince Hotel', 'A convenient parking space', 'https://pix10.agoda.net/hotelImages/109/10991/10991_16080819080045308387.jpg?ca=6&ce=1&s=1024x768', '456 Example Avenue', 10.772999604850733, 106.70401515207669, 80000, 10, 1);
+INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
+VALUES (2, 2, 'UNIQLO Saigon Centre', 'A convenient parking space', 'https://lh5.googleusercontent.com/p/AF1QipPC-E4AKnHB_YIoL5tlhjj-9h5kQ9LPtnsFUYTb=w426-h240-k-no', '456 Example Avenue', 10.77395076501537, 106.70061297548841, 80000, 10, 1);
 
-LOCK TABLES `paymentdetail` WRITE;
-/*!40000 ALTER TABLE `paymentdetail` DISABLE KEYS */;
-/*!40000 ALTER TABLE `paymentdetail` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO Reservation (userID, parkingID, statusID, carID, startDateTime, endDatetime)
+VALUES (2, 2, 1, 1, '2023-05-22 09:00:00', '2023-05-22 18:00:00');
+INSERT INTO Reservation (userID, parkingID, statusID, carID, startDateTime, endDatetime)
+VALUES (2, 2, 1, 1, '2023-05-23 10:30:00', '2023-05-23 17:30:00');
+INSERT INTO Reservation (userID, parkingID, statusID, carID, startDateTime, endDatetime)
+VALUES (2, 2, 2, 2, '2023-05-22 12:00:00', '2023-05-22 16:00:00');
+INSERT INTO Reservation (userID, parkingID, statusID, carID, startDateTime, endDatetime)
+VALUES (2, 2, 2, 2, '2023-05-21 12:00:00', '2023-05-21 16:00:00');
+INSERT INTO Reservation (userID, parkingID, statusID, carID, startDateTime, endDatetime)
+VALUES (2, 2, 3, 3, '2023-05-20 12:00:00', '2023-05-21 19:00:00');
+INSERT INTO Reservation (userID, parkingID, statusID, carID, startDateTime, endDatetime)
+VALUES (2, 2, 3, 3, '2023-05-20 12:00:00', '2023-05-21 20:00:00');
+INSERT INTO Reservation (userID, parkingID, statusID, carID, startDateTime, endDatetime)
+VALUES (1, 1, 1, 6, '2023-05-25 19:00:00', '2023-05-25 20:00:00');
 
---
--- Table structure for table `reservation`
---
 
-DROP TABLE IF EXISTS `reservation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `reservation` (
-  `reserveID` int NOT NULL AUTO_INCREMENT,
-  `phoneNumber` varchar(10) NOT NULL,
-  `parkingID` int NOT NULL,
-  `statusID` int NOT NULL,
-  `paymentID` int NOT NULL,
-  `carID` int NOT NULL,
-  `startDateTime` timestamp NULL DEFAULT NULL,
-  `endDatetime` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`reserveID`),
-  KEY `FK_CustomerReservation` (`phoneNumber`),
-  KEY `FK_ParkingReservation` (`parkingID`),
-  KEY `FK_StatusReservation` (`statusID`),
-  KEY `FK_PaymentReservation` (`paymentID`),
-  KEY `FK_CarReservation` (`carID`),
-  CONSTRAINT `FK_CarReservation` FOREIGN KEY (`carID`) REFERENCES `cardetail` (`carID`),
-  CONSTRAINT `FK_CustomerReservation` FOREIGN KEY (`phoneNumber`) REFERENCES `user` (`phoneNumber`),
-  CONSTRAINT `FK_ParkingReservation` FOREIGN KEY (`parkingID`) REFERENCES `parking` (`parkingID`),
-  CONSTRAINT `FK_PaymentReservation` FOREIGN KEY (`paymentID`) REFERENCES `paymentdetail` (`paymentID`),
-  CONSTRAINT `FK_StatusReservation` FOREIGN KEY (`statusID`) REFERENCES `revervationstatus` (`statusID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `reservation`
---
-
-LOCK TABLES `reservation` WRITE;
-/*!40000 ALTER TABLE `reservation` DISABLE KEYS */;
-/*!40000 ALTER TABLE `reservation` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `revervationstatus`
---
-
-DROP TABLE IF EXISTS `revervationstatus`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `revervationstatus` (
-  `statusID` int NOT NULL AUTO_INCREMENT,
-  `statusName` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  PRIMARY KEY (`statusID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `revervationstatus`
---
-
-LOCK TABLES `revervationstatus` WRITE;
-/*!40000 ALTER TABLE `revervationstatus` DISABLE KEYS */;
-/*!40000 ALTER TABLE `revervationstatus` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `role`
---
-
-DROP TABLE IF EXISTS `role`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `role` (
-  `roleID` int NOT NULL AUTO_INCREMENT,
-  `roleName` varchar(50) NOT NULL,
-  PRIMARY KEY (`roleID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `role`
---
-
-LOCK TABLES `role` WRITE;
-/*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'ROLE_SUPPLIER'),(2,'ROLE_CUSTOMER');
-/*!40000 ALTER TABLE `role` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `specialdate`
---
-
-DROP TABLE IF EXISTS `specialdate`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `specialdate` (
-  `specialDateID` int NOT NULL AUTO_INCREMENT,
-  `startSpecialDate` timestamp NULL DEFAULT NULL,
-  `endSpecialDate` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`specialDateID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `specialdate`
---
-
-LOCK TABLES `specialdate` WRITE;
-/*!40000 ALTER TABLE `specialdate` DISABLE KEYS */;
-INSERT INTO `specialdate` VALUES (1,'2023-05-01 03:00:00','2023-05-10 11:00:00'),(2,'2023-06-15 01:30:00','2023-06-15 10:00:00'),(3,'2023-08-31 17:00:00','2023-09-30 16:59:59');
-/*!40000 ALTER TABLE `specialdate` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `user`
---
-
-DROP TABLE IF EXISTS `user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user` (
-  `phoneNumber` varchar(10) NOT NULL,
-  `password` varchar(200) DEFAULT NULL,
-  `fullName` varchar(256) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `identifyCard` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`phoneNumber`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user`
---
-
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES ('0123456789','$2a$10$CovsRO2OYukwwURjLe1uGOYI1/z7jpjiKswqZfOK2.egrU2HGSzEi','Admin Parking','admin@gmail.com','111111111111'),('0946219139','$2a$10$CovsRO2OYukwwURjLe1uGOYI1/z7jpjiKswqZfOK2.egrU2HGSzEi','Hoang Tam','hoangtammht@gmail.com','111111111111');
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `userrole`
---
-
-DROP TABLE IF EXISTS `userrole`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `userrole` (
-  `roleID` int NOT NULL,
-  `phoneNumber` varchar(10) NOT NULL,
-  KEY `FK_UserRole` (`phoneNumber`),
-  KEY `FK_RoleUser` (`roleID`),
-  CONSTRAINT `FK_RoleUser` FOREIGN KEY (`roleID`) REFERENCES `role` (`roleID`),
-  CONSTRAINT `FK_UserRole` FOREIGN KEY (`phoneNumber`) REFERENCES `user` (`phoneNumber`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `userrole`
---
-
-LOCK TABLES `userrole` WRITE;
-/*!40000 ALTER TABLE `userrole` DISABLE KEYS */;
-INSERT INTO `userrole` VALUES (1,'0123456789'),(1,'0946219139'),(2,'0946219139');
-/*!40000 ALTER TABLE `userrole` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2023-05-23 22:02:15

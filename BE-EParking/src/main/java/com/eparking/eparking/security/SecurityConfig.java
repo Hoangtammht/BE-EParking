@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/car/**",
                 "/parking/getParkingDetail",
                 "/parking/getListParking",
+                "/parking/searchNearbyParking",
                 "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**"
         ).permitAll();
         http.authorizeRequests().antMatchers(PUT,"/user/updateUser").permitAll();
