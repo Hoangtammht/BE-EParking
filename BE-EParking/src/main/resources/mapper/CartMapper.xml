@@ -6,15 +6,15 @@
 <mapper namespace="com.eparking.eparking.dao.CartMapper">
 
     <resultMap id = "ListCartMap" type = "com.eparking.eparking.domain.Cart">
-        <result property = "phoneNumber" column = "phoneNumber"/>
+        <result property = "userID" column = "userID"/>
         <result property = "reserveID" column = "reserveID"/>
     </resultMap>
 
-    <select id="getListCartByUser" resultMap="ListCartMap">
+    <select id="getListCartByUserID" resultMap="ListCartMap">
         SELECT
-        phoneNumber, reserveID
+        userID, reserveID
         FROM Cart
-        where phoneNumber = #{phoneNumber}
+        WHERE userID = #{userID}
     </select>
 
 </mapper>

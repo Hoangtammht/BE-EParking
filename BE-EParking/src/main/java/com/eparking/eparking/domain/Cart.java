@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cart {
-    private String phoneNumber;
+    private int userID;
     private int reserveID;
 }

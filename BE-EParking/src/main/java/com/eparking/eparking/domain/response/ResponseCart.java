@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseCart {
-    private String phoneNumber;
+    private int userID;
     private int carsNumber;
     private List<Reservation> reservationDetail;
 }

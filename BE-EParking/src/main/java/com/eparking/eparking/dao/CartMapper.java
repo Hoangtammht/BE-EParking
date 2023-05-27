@@ -6,5 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 @Mapper
 public interface CartMapper {
-    List<Cart> getListCartByUser (String phoneNumber);
+    List<Cart> getListCartByUserID (int userID);
 }

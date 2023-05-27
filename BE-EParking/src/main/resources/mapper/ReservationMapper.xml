@@ -8,7 +8,7 @@
     <select id="getReservationDetailByReservationID" resultType="com.eparking.eparking.domain.Reservation">
         SELECT
         reserveID,
-        phoneNumber,
+        userID,
         parkingID,
         statusID,
         carID,
@@ -18,4 +18,29 @@
         where reserveID = #{reserveID}
     </select>
 
+    <select id="getListOrderByUserAndStatusID" resultType="com.eparking.eparking.domain.response.ResponseReservation">
+        SELECT
+        reserveID,
+        R.userID,
+        R.parkingID,
+        parkingName,
+        address,
+        pricing,
+        statusID,
+        startDateTime,
+        endDatetime,
+        R.carID,
+        licensePlate
+        FROM Reservation R,Parking P, User U,cardetail C
+        WHERE R.parkingID = P.parkingID
+        AND R.carID = C.carID
+        AND R.userID = #{userID}
+        AND R.userID = U.userID
+        AND R.statusID = #{statusID}
+        ORDER BY R.startDateTime DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+    <select id="getNumberOfListOrder" resultType="java.lang.Long">
+        SELECT COUNT(reserveID) FROM Reservation WHERE userID = #{userID} AND statusID = #{statusID}
+    </select>
 </mapper>

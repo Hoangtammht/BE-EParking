@@ -16,11 +16,15 @@ import java.util.List;
 public class CartImpl implements CartService {
     private final CartMapper cartMapper;
     @Override
-    public List<Cart> getListCartByUser(String phoneNumber) {
+    public List<Cart> getListCartByUserID(int userID) {
+            List<Cart> cart = cartMapper.getListCartByUserID(userID);
+            if(cart.isEmpty() || cart.size() == 0){
+                throw new ApiRequestException("This cart get by this user is empty!");
+            }
         try{
-            return cartMapper.getListCartByUser(phoneNumber);
+            return cart;
         }catch (Exception e){
-            throw new ApiRequestException("Failed to get all list cart by user: " + e);
+            throw new ApiRequestException("Fail to get list cart by this user");
         }
     }
 }
