@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eparking.eparking.dao.ReservationMapper">
+
+    <select id="getReservationDetailByReservationID" resultType="com.eparking.eparking.domain.Reservation">
+        SELECT
+        reserveID,
+        userID,
+        parkingID,
+        statusID,
+        carID,
+        startDateTime,
+        endDatetime
+        FROM Reservation
+        where reserveID = #{reserveID}
+    </select>
+
+    <select id="getListOrderByUserAndStatusID" resultType="com.eparking.eparking.domain.response.ResponseReservation">
+        SELECT
+        reserveID,
+        R.userID,
+        R.parkingID,
+        parkingName,
+        address,
+        pricing,
+        statusID,
+        startDateTime,
+        endDatetime,
+        R.carID,
+        licensePlate
+        FROM Reservation R,Parking P, User U,cardetail C
+        WHERE R.parkingID = P.parkingID
+        AND R.carID = C.carID
+        AND R.userID = #{userID}
+        AND R.userID = U.userID
+        AND R.statusID = #{statusID}
+        ORDER BY R.startDateTime DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+    <select id="getNumberOfListOrder" resultType="java.lang.Long">
+        SELECT COUNT(reserveID) FROM Reservation WHERE userID = #{userID} AND statusID = #{statusID}
+    </select>
+</mapper>

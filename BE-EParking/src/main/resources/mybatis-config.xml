@@ -21,5 +21,8 @@
 
     <mapper resource="mapper/SpecialDateMapper.xml"></mapper>
 
+    <mapper resource="mapper/CartMapper.xml"></mapper>
+
+    <mapper resource="mapper/ReservationMapper.xml"></mapper>
 </mappers>
 </configuration>
