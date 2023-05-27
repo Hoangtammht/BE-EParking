@@ -87,5 +87,42 @@
         VALUES (#{specialDateID}, #{startSpecialDate}, #{endSpecialDate});
     </insert>
 
+    <select id="searchNearbyParking" resultType="com.eparking.eparking.domain.response.ResponseParking">
+        <![CDATA[
+        SELECT
+        parkingID,
+        P.userID,
+        phoneNumber,
+        methodName,
+        parkingName,
+        description,
+        images,
+        address,
+        latitude,
+        longitude,
+        pricing,
+        park,
+        status,
+        6371 * 2 * ASIN(SQRT(POWER(SIN((#{latitude} - ABS(latitude)) * PI()/180/2), 2) + COS(#{latitude} * PI()/180) * COS(ABS(latitude) * PI()/180) * POWER(SIN((#{longitude} - longitude) * PI()/180/2), 2))) AS distance
+    FROM Parking P, Method M, User U
+    WHERE P.methodID = M.methodID
+        AND U.userID = P.userID
+        AND 6371 * 2 * ASIN(SQRT(POWER(SIN((#{latitude} - ABS(latitude))) * PI()/180/2, 2) + COS(#{latitude} * PI()/180) * COS(ABS(latitude) * PI()/180) * POWER(SIN((#{longitude} - longitude) * PI()/180/2), 2))) < #{radius}
+    ORDER BY
+        CASE
+             WHEN #{sortBy} = 'cheapest' THEN pricing
+             WHEN #{sortBy} = 'nearest' THEN distance
+             WHEN #{sortBy} = 'cheapest_nearest' THEN pricing
+             ELSE distance
+         END ASC,
+         distance ASC
+    LIMIT #{size} OFFSET #{offset}
+    ]]>
+    </select>
+
+
+
+
+
 
 </mapper>

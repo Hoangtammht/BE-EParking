@@ -10,14 +10,14 @@ import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ParkingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -81,7 +81,7 @@ public class ParkingImpl implements ParkingService {
     public Page<ResponseParking> getListParking(int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
-            int offset = page * size;
+            long offset = pageable.getOffset();
             List<ResponseParking> parkingList = parkingMapper.getListParking(size, offset);
             long totalCount = parkingMapper.getNumberOfParkings();
             return new PageImpl<>(parkingList, pageable, totalCount);
@@ -89,5 +89,35 @@ public class ParkingImpl implements ParkingService {
             throw new ApiRequestException("Failed to get all Parking: " + e);
         }
     }
+
+    @Override
+    public Page<ResponseParking> searchNearbyParking(double latitude, double longitude, int page, int size, String sortBy, double radius) {
+        try {
+            Sort sort = null;
+            if (sortBy != null) {
+                switch (sortBy.toLowerCase()) {
+                    case "cheapest":
+                        sort = Sort.by("pricing");
+                        break;
+                    case "nearest":
+                        sort = Sort.by("distance");
+                        break;
+                    case "cheapest_nearest":
+                        sort = Sort.by("pricing", "distance");
+                        break;
+                    default:
+                        throw new ApiRequestException("Invalid sorting option.");
+                }
+            }
+            Pageable pageable = PageRequest.of(page, size, sort);
+            long offset = pageable.getOffset();
+            List<ResponseParking> parkingList = parkingMapper.searchNearbyParking(latitude, longitude, radius, size, offset, sortBy);
+            long totalCount = parkingMapper.getNumberOfParkings();
+            return new PageImpl<>(parkingList, pageable, totalCount);
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to get list Parking Nearly: " + e);
+        }
+    }
+
 
 }

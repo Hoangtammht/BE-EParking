@@ -8,6 +8,7 @@ import com.eparking.eparking.domain.response.ResponseParking;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -19,7 +20,8 @@ public interface ParkingMapper {
     void addSpecialDatesForParking(List<ParkingSpecialDate> parkingSpecialDates);
     List<ParkingDate> showDatesOfParking(int parkingID);
     void createSpecialDate(SpecialDate specialDate);
-    List<ResponseParking> getListParking(int size,int offset);
+    List<ResponseParking> getListParking(int size,long offset);
     long getNumberOfParkings();
+    List<ResponseParking> searchNearbyParking(double latitude, double longitude, double radius, int size, long offset, String sortBy);
 
 }

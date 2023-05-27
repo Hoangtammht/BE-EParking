@@ -3,10 +3,12 @@ package com.eparking.eparking.controller;
 import com.eparking.eparking.domain.*;
 import com.eparking.eparking.domain.response.RequestListParking;
 import com.eparking.eparking.domain.response.ResponseParking;
+import com.eparking.eparking.domain.resquest.RequestSearchNearByParking;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ParkingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -96,10 +98,30 @@ public class ParkingController {
             HttpServletResponse response,
             HttpServletRequest request) {
         try {
-            int page = requestListParking.getPage();
+            int page = requestListParking.getPage() - 1;
             int size = requestListParking.getSize();
             Page<ResponseParking> parkingPage = parkingService.getListParking(page, size);
             return ResponseEntity.ok(parkingPage);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
+    @GetMapping("/searchNearbyParking")
+    public ResponseEntity<Page<ResponseParking>> searchNearbyParking(
+            @RequestBody RequestSearchNearByParking requestSearchNearByParking,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) {
+        try {
+            double latitude = requestSearchNearByParking.getLatitude();
+            double longitude = requestSearchNearByParking.getLongitude();
+            int page = requestSearchNearByParking.getPage() - 1;
+            int size = requestSearchNearByParking.getSize();
+            String sortBy = requestSearchNearByParking.getSortBy();
+            double radius = requestSearchNearByParking.getRadius();
+            Page<ResponseParking> listParking = parkingService.searchNearbyParking(latitude, longitude, page, size, sortBy, radius);
+            return ResponseEntity.ok(listParking);
         } catch (ApiRequestException e) {
             throw e;
         }

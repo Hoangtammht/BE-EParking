@@ -75,7 +75,7 @@ public class UserImpl implements UserDetailsService, UserService {
     @Transactional
     public User createSupplier(User user) {
         User existingSupplier = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
-        if (existingSupplier != null) {
+        if (existingSupplier != null ) {
             throw new ApiRequestException("The supplier already exists");
         }
         try {
