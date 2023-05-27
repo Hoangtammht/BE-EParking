@@ -9,5 +9,5 @@ import java.util.List;
 public interface ReservationService {
     Reservation getReservationDetailByReservationID(int reserveID);
 
-    Page<ResponseReservation> getListOrderByUserAndStatusID(int userID, int statusID, int size, int pag);
+    Page<ResponseReservation> getListOrderByUserAndStatusID(int statusID, int size, int pag);
 }

@@ -19,6 +19,7 @@
 
     <select id="findResponseUserByPhone" resultType="com.eparking.eparking.domain.response.ResponseUser">
         SELECT
+            userID,
             User.phoneNumber,
             fullName,
             email,

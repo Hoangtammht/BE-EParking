@@ -5,6 +5,7 @@ import com.eparking.eparking.domain.Reservation;
 import com.eparking.eparking.domain.response.ResponseReservation;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ReservationService;
+import com.eparking.eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import java.util.List;
 @Slf4j
 public class ReservationImpl implements ReservationService {
     private final ReservationMapper reservationMapper;
+    private final UserService userService;
     @Override
     public Reservation getReservationDetailByReservationID(int reserveID) {
         try{
@@ -32,10 +34,10 @@ public class ReservationImpl implements ReservationService {
     }
 
     @Override
-    public Page<ResponseReservation> getListOrderByUserAndStatusID(int userID, int statusID, int size, int page) {
+    public Page<ResponseReservation> getListOrderByUserAndStatusID(int statusID, int size, int page) {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String a = authentication.getName();
+            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
             Pageable pageable = PageRequest.of(page, size);
             int offset = (page-1) * size;
             List<ResponseReservation> RepoReservation = reservationMapper.getListOrderByUserAndStatusID(userID,statusID,size,offset);
