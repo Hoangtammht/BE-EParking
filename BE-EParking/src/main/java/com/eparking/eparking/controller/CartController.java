@@ -6,8 +6,11 @@ import com.eparking.eparking.domain.response.ResponseCart;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.CartService;
 import com.eparking.eparking.service.interf.ReservationService;
+import com.eparking.eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,11 +23,14 @@ import java.util.List;
 public class CartController {
     private final CartService cartService;
     private final ReservationService reservationService;
+    private final UserService userService;
     @GetMapping("/getListReservation")
-    public ResponseEntity<ResponseCart> getListReservation(@RequestParam int userID){
+    public ResponseEntity<ResponseCart> getListReservation(){
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
             ResponseCart responeCart = new ResponseCart();
-            List<Cart> listCart = cartService.getListCartByUserID(userID);
+            List<Cart> listCart = cartService.getListCartByUserID();
             int count = 0;
             List<Reservation> reservations = new ArrayList<>();
             for (Cart cart :

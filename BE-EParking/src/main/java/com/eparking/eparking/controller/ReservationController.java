@@ -24,10 +24,9 @@ public class ReservationController {
     public ResponseEntity<Page<ResponseReservation>> getListParking(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "2") int size,
-            @RequestParam int userID,
             @RequestParam int statusID) {
         try {
-            Page<ResponseReservation> reservations = reservationService.getListOrderByUserAndStatusID(userID,statusID,size,page);
+            Page<ResponseReservation> reservations = reservationService.getListOrderByUserAndStatusID(statusID,size,page);
             return ResponseEntity.ok(reservations);
         } catch (ApiRequestException e) {
             throw e;
