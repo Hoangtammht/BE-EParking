@@ -1,6 +1,7 @@
 package com.eparking.eparking.service.impl;
 
 import com.eparking.eparking.dao.RoleMapper;
+import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.service.interf.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,10 @@ public class RoleImpl implements RoleService {
     @Override
     public void insertUserRole(int roleID, int userID) {
         roleMapper.insertUserRole(roleID, userID);
+    }
+
+    @Override
+    public boolean findRoleIDForUser(String phoneNumber) {
+        return roleMapper.findRoleIDForUser(phoneNumber);
     }
 }

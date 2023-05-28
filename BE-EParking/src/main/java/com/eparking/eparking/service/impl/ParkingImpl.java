@@ -8,10 +8,13 @@ import com.eparking.eparking.domain.SpecialDate;
 import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ParkingService;
+import com.eparking.eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +29,15 @@ public class ParkingImpl implements ParkingService {
 
     private final ParkingMapper parkingMapper;
 
+    private final UserService userService;
+
     @Override
     @Transactional
     public ResponseParking createParking(Parking parking) {
         try {
-            parkingMapper.createParking(parking);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
+            parkingMapper.createParking(parking, userID);
             return parkingMapper.findParkingByParkingID(parking.getParkingID());
         } catch (Exception e) {
             throw new ApiRequestException("Failed to create parking: " + e);

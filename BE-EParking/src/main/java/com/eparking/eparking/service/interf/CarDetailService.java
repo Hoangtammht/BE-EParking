@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface CarDetailService {
 
-    List<ResponseCarDetail> addCar(CarDetail carDetail);
+    List<ResponseCarDetail> addCar(String licensePlate);
 
     void removeCar(int carID);
 

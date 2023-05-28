@@ -20,4 +20,13 @@
         values (#{roleID},#{userID})
     </insert>
 
+    <select id="findRoleIDForUser" resultType="boolean">
+        SELECT Role.roleID, Role.roleName
+        FROM User
+        INNER JOIN UserRole ON User.userID = UserRole.userID
+        INNER JOIN Role ON Role.roleID = UserRole.roleID
+        WHERE UserRole.roleID = 1
+        AND User.phoneNumber = #{phoneNumber};
+    </select>
+
 </mapper>
