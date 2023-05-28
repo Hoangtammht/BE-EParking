@@ -5,9 +5,9 @@
 
 <mapper namespace="com.eparking.eparking.dao.ParkingMapper">
 
-    <insert id="createParking" useGeneratedKeys="true" keyProperty="parkingID" parameterType="com.eparking.eparking.domain.Parking">
+    <insert id="createParking" useGeneratedKeys="true" keyProperty="parking.parkingID" parameterType="com.eparking.eparking.domain.Parking">
         INSERT INTO Parking (userID, methodID, parkingName, description, images, address, latitude, longitude, pricing, park, status)
-        VALUES (#{userID}, #{methodID}, #{parkingName}, #{description}, #{images}, #{address}, #{latitude}, #{longitude}, #{pricing}, #{park}, "1");
+        VALUES (#{userID}, #{parking.methodID}, #{parking.parkingName}, #{parking.description}, #{parking.images}, #{parking.address}, #{parking.latitude}, #{parking.longitude}, #{parking.pricing}, #{parking.park}, "1");
     </insert>
 
     <select id="findParkingByParkingID" resultType="com.eparking.eparking.domain.response.ResponseParking">

@@ -26,13 +26,13 @@ public class CarController {
     private final CarDetailService carDetailService;
 
     @PostMapping("/addCar")
-    public ResponseEntity<List<ResponseCarDetail>> addCar(@RequestBody CarDetail carDetail,
+    public ResponseEntity<List<ResponseCarDetail>> addCar(@RequestParam String licensePlate,
                                                           HttpServletResponse response,
                                                           HttpServletRequest request) {
         try {
             URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/car/addCar")
                     .toUriString());
-            List<ResponseCarDetail> addedCars = carDetailService.addCar(carDetail);
+            List<ResponseCarDetail> addedCars = carDetailService.addCar(licensePlate);
             return ResponseEntity.created(uri).body(addedCars);
         } catch (Exception e) {
             throw new ApiRequestException("Oops cannot add Information'Car to user");

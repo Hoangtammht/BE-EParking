@@ -30,9 +30,9 @@
 
     <update id="updateUserByPhoneNumber" parameterType = "com.eparking.eparking.domain.User">
         UPDATE User SET
-            fullName = #{fullName},
-            email = #{email},
-            identifyCard = #{identifyCard}
+            fullName = #{updateUser.fullName},
+            email = #{updateUser.email},
+            identifyCard = #{updateUser.identifyCard}
         WHERE phoneNumber = #{phoneNumber};
     </update>
 

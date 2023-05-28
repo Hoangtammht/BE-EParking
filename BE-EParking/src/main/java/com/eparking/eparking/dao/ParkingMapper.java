@@ -14,7 +14,7 @@ import java.util.List;
 
 @Mapper
 public interface ParkingMapper {
-    void createParking(Parking parking);
+    void createParking(Parking parking, int userID);
     ResponseParking findParkingByParkingID(int parkingID);
     void addDatesForParking(List<ParkingDate> parkingDates);
     void addSpecialDatesForParking(List<ParkingSpecialDate> parkingSpecialDates);

@@ -10,7 +10,9 @@ import com.eparking.eparking.service.interf.RoleService;
 import com.eparking.eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -64,8 +66,10 @@ public class UserImpl implements UserDetailsService, UserService {
     @Override
     public User updateUserByPhoneNumber(UpdateUser updateUser) {
         try {
-            userMapper.updateUserByPhoneNumber(updateUser);
-            return findUserByPhoneNumber(updateUser.getPhoneNumber());
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String phoneNumber = authentication.getName();
+            userMapper.updateUserByPhoneNumber(updateUser, phoneNumber);
+            return findUserByPhoneNumber(phoneNumber);
         } catch (Exception e) {
             throw new RuntimeException("Failed to update user by phone number");
         }
@@ -75,10 +79,14 @@ public class UserImpl implements UserDetailsService, UserService {
     @Transactional
     public User createSupplier(User user) {
         User existingSupplier = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
-        if (existingSupplier != null ) {
-            throw new ApiRequestException("The supplier already exists");
-        }
         try {
+            if (existingSupplier != null) {
+                if(roleService.findRoleIDForUser(existingSupplier.getPhoneNumber())) {
+                    throw new ApiRequestException("The supplier already exists");
+                }else {
+                    roleService.insertUserRole(1, user.getUserID());
+                }
+            }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userMapper.createSupplier(user);
             roleService.insertUserRole(1, user.getUserID());

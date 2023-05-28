@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper {
     User findUserByPhoneNumber(String phoneNumber);
     ResponseUser findResponseUserByPhone(String phoneNumber);
-    void updateUserByPhoneNumber(UpdateUser updateUser);
+    void updateUserByPhoneNumber(UpdateUser updateUser, String phoneNumber);
     void createSupplier(User user);
 
 }

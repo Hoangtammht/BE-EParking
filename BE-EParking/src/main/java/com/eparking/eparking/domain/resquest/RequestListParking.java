@@ -1,4 +1,4 @@
-package com.eparking.eparking.domain.response;
+package com.eparking.eparking.domain.resquest;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
