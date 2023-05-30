@@ -79,8 +79,8 @@ public class ParkingController {
         }
     }
 
-    @GetMapping("/getParkingDetail")
-    public ResponseEntity<ResponseParking> getParkingDetail(@RequestParam int parkingID,
+    @GetMapping("/getParkingDetail/{parkingID}")
+    public ResponseEntity<ResponseParking> getParkingDetail(@PathVariable("parkingID") int parkingID,
                                                             HttpServletResponse response,
                                                             HttpServletRequest request) {
         try {

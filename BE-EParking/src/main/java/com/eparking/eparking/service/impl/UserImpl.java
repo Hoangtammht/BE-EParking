@@ -4,6 +4,7 @@ import com.eparking.eparking.dao.UserMapper;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.ResponseUser;
+import com.eparking.eparking.domain.resquest.RequestCreateUser;
 import com.eparking.eparking.domain.resquest.UpdateUser;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.RoleService;
@@ -71,29 +72,28 @@ public class UserImpl implements UserDetailsService, UserService {
             userMapper.updateUserByPhoneNumber(updateUser, phoneNumber);
             return findUserByPhoneNumber(phoneNumber);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to update user by phone number");
+            throw new ApiRequestException("Failed to update user by phone number");
         }
     }
 
     @Override
     @Transactional
-    public User createSupplier(User user) {
-        User existingSupplier = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
+    public User createUser(RequestCreateUser user) {
+        User existingUser = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
         try {
-            if (existingSupplier != null) {
-                if(roleService.findRoleIDForUser(existingSupplier.getPhoneNumber())) {
-                    throw new ApiRequestException("The supplier already exists");
-                }else {
-                    roleService.insertUserRole(1, user.getUserID());
-                }
+            if (existingUser != null) {
+                    throw new ApiRequestException("The user is already exists");
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userMapper.createSupplier(user);
-            roleService.insertUserRole(1, user.getUserID());
+            User newUser = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
+            for (Integer roleID: user.getUserRoles()) {
+                roleService.insertUserRole(roleID, newUser.getUserID());
+            }
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to create supplier: " + e);
+            throw new ApiRequestException("Failed to create user: " + e);
         }
-        return user;
+        return findUserByPhoneNumber(user.getPhoneNumber());
     }
 
 }
