@@ -2,6 +2,7 @@ package com.eparking.eparking.service.interf;
 
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.response.ResponseUser;
+import com.eparking.eparking.domain.resquest.RequestCreateUser;
 import com.eparking.eparking.domain.resquest.UpdateUser;
 
 public interface UserService {
@@ -12,6 +13,6 @@ public interface UserService {
 
     User updateUserByPhoneNumber(UpdateUser updateUser);
 
-    User createSupplier(User user);
+    User createUser(RequestCreateUser user);
 
 }
