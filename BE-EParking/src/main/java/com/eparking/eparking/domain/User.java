@@ -14,5 +14,6 @@ public class User {
     private String fullName;
     private String email;
     private String identifyCard;
+    private Long wallet;
 
 }

@@ -1,5 +1,5 @@
 CREATE DATABASE EParking;
-
+USE EParking;
 CREATE TABLE Method (
     methodID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
     methodName varchar(255) NOT NULL
@@ -91,6 +91,11 @@ CREATE TABLE Reservation (
     totalPrice int
 );
 
+CREATE TABLE Cart(
+	userID int NOT NULL,
+    reserveID int NOT NULL unique
+);
+
 -- FK_Parking
 ALTER TABLE Parking ADD CONSTRAINT FK_SupplierParking FOREIGN KEY (userID) REFERENCES User(userID);
 ALTER TABLE Parking ADD CONSTRAINT FK_MethodParking FOREIGN KEY (methodID) REFERENCES Method(methodID);
@@ -118,6 +123,35 @@ ALTER TABLE PaymentDetail ADD CONSTRAINT FK_ReservationPayment FOREIGN KEY (rese
 -- FK-Role
 ALTER TABLE UserRole ADD CONSTRAINT FK_UserRole FOREIGN KEY (userID) REFERENCES User(userID);
 ALTER TABLE UserRole ADD CONSTRAINT FK_RoleUser FOREIGN KEY (roleID) REFERENCES Role(roleID);
+
+-- FK-Cart
+ALTER TABLE Cart ADD CONSTRAINT FK_User FOREIGN KEY (userID) REFERENCES User(userID);
+ALTER TABLE Cart ADD CONSTRAINT FK_ReservationID FOREIGN KEY (reserveID) REFERENCES Reservation(reserveID);
+
+-- Trigger for cart
+
+DELIMITER //
+
+CREATE TRIGGER alterTableCart AFTER UPDATE
+ON Reservation FOR EACH ROW
+BEGIN
+	DECLARE cartCount INT;
+
+	-- Kiểm tra xem userID và reserveID mới có tồn tại trong bảng Cart hay không
+	SELECT COUNT(*) INTO cartCount
+	FROM Cart
+	WHERE userID = NEW.userID AND reserveID = NEW.reserveID AND NEW.statusID != 1;
+    IF cartCount = 0 THEN
+	IF NEW.statusID = 2 OR NEW.statusID = 3 THEN
+		INSERT INTO Cart (userID, reserveID)
+		VALUES (NEW.userID, NEW.reserveID);
+	ELSE
+		DELETE FROM Cart WHERE reserveID = NEW.reserveID;
+	END IF;
+    END IF;
+END //
+
+DELIMITER ;
 
 INSERT INTO User(phoneNumber, password, fullName, email, identifyCard)
 VALUES ("0123456789", "$2a$10$CovsRO2OYukwwURjLe1uGOYI1/z7jpjiKswqZfOK2.egrU2HGSzEi", "Admin Parking", "admin@gmail.com", "111111111111");

@@ -12,7 +12,8 @@
             password,
             fullName,
             email,
-            identifyCard
+            identifyCard,
+            wallet
         FROM User
         where phoneNumber = #{phoneNumber};
     </select>
@@ -40,4 +41,10 @@
         Insert into User (phoneNumber, password, fullName, email, identifyCard)
         values (#{phoneNumber},#{password},#{fullName},#{email},#{identifyCard})
     </insert>
+
+    <update id="updateWalletForUser" parameterType="com.eparking.eparking.domain.User" >
+        UPDATE User
+        SET wallet = #{wallet}
+        WHERE userID = #{userID}
+    </update>
 </mapper>

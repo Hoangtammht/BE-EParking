@@ -96,4 +96,24 @@ public class UserImpl implements UserDetailsService, UserService {
         return user;
     }
 
+    @Override
+    public void updateWalletForUser(String responseCode,Long wallet) {
+        try{
+            if(responseCode.equals("00")){
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                User user = userMapper.findUserByPhoneNumber(authentication.getName());
+                user.getWallet();
+                if(user.getWallet() == null ){
+                    user.setWallet(0L);
+                }
+                Long userWallet = user.getWallet() + wallet;
+                userMapper.updateWalletForUser(userMapper.findUserByPhoneNumber(authentication.getName()).getUserID(),userWallet);
+            }else {
+                throw new ApiRequestException("Failed to update wallet for user because responseCode invaid: ");
+            }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update wallet for user: " + e);
+        }
+    }
+
 }

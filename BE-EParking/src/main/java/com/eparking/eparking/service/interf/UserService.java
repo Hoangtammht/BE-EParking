@@ -14,4 +14,5 @@ public interface UserService {
 
     User createSupplier(User user);
 
+    void updateWalletForUser(String responseCode,Long wallet);
 }
