@@ -65,9 +65,27 @@
         SELECT COUNT(reserveID) FROM Reservation WHERE userID = #{userID} AND statusID = #{statusID}
     </select>
 
-    <insert id="createReservation" useGeneratedKeys="true" keyProperty="requestReservation.reserveID" parameterType="com.eparking.eparking.domain.response.ResponseReservation">
-        INSERT INTO Reservation (userID, reserveID, parkingID, statusID, carID, startDateTime, endDatetime, totalPrice)
-        VALUES (#{userID}, #{requestReservation.reserveID}, #{requestReservation.parkingID}, #{requestReservation.statusID}, #{requestReservation.carID}, #{requestReservation.startDateTime}, #{requestReservation.endDatetime}, #{requestReservation.totalPrice});
+    <insert id="createReservation" parameterType="com.eparking.eparking.domain.response.ResponseReservation">
+        INSERT INTO Reservation (userID,parkingID, statusID, carID, startDateTime, endDatetime, totalPrice)
+        VALUES (#{userID}, #{requestReservation.parkingID}, #{requestReservation.statusID}, #{requestReservation.carID}, #{requestReservation.startDateTime}, #{requestReservation.endDatetime}, #{requestReservation.totalPrice});
     </insert>
-
+    <select id="getNewlyInsertedReservation" resultType="com.eparking.eparking.domain.response.ResponseReservation">
+        SELECT
+        reserveID,
+        R.userID,
+        R.parkingID,
+        parkingName,
+        address,
+        pricing,
+        statusID,
+        startDateTime,
+        endDatetime,
+        R.carID,
+        licensePlate
+        FROM Reservation R,Parking P, User U,cardetail C
+        WHERE R.parkingID = P.parkingID
+        AND R.carID = C.carID
+        AND R.userID = U.userID
+        AND R.reserveID = (SELECT LAST_INSERT_ID())
+    </select>
 </mapper>

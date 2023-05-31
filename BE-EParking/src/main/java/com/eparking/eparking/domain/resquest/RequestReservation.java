@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestReservation {
-    private int reserveID;
     private int parkingID;
     private LocalDateTime startDateTime;
     private LocalDateTime endDatetime;
