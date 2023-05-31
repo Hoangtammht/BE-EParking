@@ -1,6 +1,7 @@
 package com.eparking.eparking.service.impl;
 
 import com.eparking.eparking.dao.UserMapper;
+import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.ResponseUser;
@@ -96,4 +97,17 @@ public class UserImpl implements UserDetailsService, UserService {
         return findUserByPhoneNumber(user.getPhoneNumber());
     }
 
+    @Override
+    public User getUserProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String phoneNumber = authentication.getName();
+        return findUserByPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public List<UserRole> getRoleByUserID() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String phoneNumber = authentication.getName();
+        return roleService.findRoleByPhoneNumber(phoneNumber);
+    }
 }

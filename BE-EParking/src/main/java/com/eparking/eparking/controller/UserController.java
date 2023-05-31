@@ -2,6 +2,7 @@ package com.eparking.eparking.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.ResponseUser;
@@ -104,5 +105,24 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getUserProfile")
+    public ResponseEntity<User> getUserProfile(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            User newSupplier = userService.getUserProfile();
+            return ResponseEntity.ok().body(newSupplier);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
+    @GetMapping("/getRoleByUserID")
+    public ResponseEntity<List<UserRole>> getRoleByUserID(HttpServletResponse response, HttpServletRequest request){
+        try {
+            List<UserRole> listRole = userService.getRoleByUserID();
+            return ResponseEntity.ok().body(listRole);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
 
 }

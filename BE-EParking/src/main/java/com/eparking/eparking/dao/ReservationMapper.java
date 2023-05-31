@@ -2,6 +2,7 @@ package com.eparking.eparking.dao;
 
 import com.eparking.eparking.domain.Reservation;
 import com.eparking.eparking.domain.response.ResponseReservation;
+import com.eparking.eparking.domain.resquest.RequestReservation;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -13,4 +14,8 @@ public interface ReservationMapper {
     List<ResponseReservation> getListOrderByUserAndStatusID(int userID, int statusID, int size, int offset);
 
     Long getNumberOfListOrder(int userID, int statusID);
+
+    void createReservation(RequestReservation requestReservation, int userID);
+
+    ResponseReservation getResponseReservationByReservationID(int reserveID);
 }

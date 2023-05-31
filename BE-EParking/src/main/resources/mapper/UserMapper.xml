@@ -40,4 +40,6 @@
         Insert into User (phoneNumber, password, fullName, email, identifyCard)
         values (#{phoneNumber},#{password},#{fullName},#{email},#{identifyCard})
     </insert>
+
+    
 </mapper>

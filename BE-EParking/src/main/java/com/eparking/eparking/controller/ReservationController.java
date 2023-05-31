@@ -2,6 +2,7 @@ package com.eparking.eparking.controller;
 
 import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.domain.response.ResponseReservation;
+import com.eparking.eparking.domain.resquest.RequestReservation;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import java.net.URI;
 @RequestMapping("/reservation")
 @RequiredArgsConstructor
 public class ReservationController {
-        private final ReservationService reservationService;
+    private final ReservationService reservationService;
     @GetMapping("/getListOrder")
     public ResponseEntity<Page<ResponseReservation>> getListParking(
             @RequestParam(defaultValue = "1") int page,
@@ -28,6 +29,19 @@ public class ReservationController {
         try {
             Page<ResponseReservation> reservations = reservationService.getListOrderByUserAndStatusID(statusID,size,page);
             return ResponseEntity.ok(reservations);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
+    @PostMapping("/createReservation")
+    public ResponseEntity<ResponseReservation> createReservation(
+            @RequestBody RequestReservation requestReservation,
+            HttpServletResponse response,
+            HttpServletRequest request){
+        try {
+            ResponseReservation createReservations = reservationService.createReservation(requestReservation);
+            return ResponseEntity.ok(createReservations);
         } catch (ApiRequestException e) {
             throw e;
         }
