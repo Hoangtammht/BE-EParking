@@ -1,9 +1,7 @@
 package com.eparking.eparking.controller;
 
 import com.eparking.eparking.domain.*;
-import com.eparking.eparking.domain.resquest.RequestListParking;
 import com.eparking.eparking.domain.response.ResponseParking;
-import com.eparking.eparking.domain.resquest.RequestSearchNearByParking;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ParkingService;
 import lombok.RequiredArgsConstructor;
@@ -79,8 +77,8 @@ public class ParkingController {
         }
     }
 
-    @GetMapping("/getParkingDetail")
-    public ResponseEntity<ResponseParking> getParkingDetail(@RequestParam int parkingID,
+    @GetMapping("/getParkingDetail/{parkingID}")
+    public ResponseEntity<ResponseParking> getParkingDetail(@PathVariable("parkingID") int parkingID,
                                                             HttpServletResponse response,
                                                             HttpServletRequest request) {
         try {
@@ -93,13 +91,12 @@ public class ParkingController {
 
     @GetMapping("/getListParking")
     public ResponseEntity<Page<ResponseParking>> getListParking(
-            @RequestBody RequestListParking requestListParking,
+            @RequestParam int page, @RequestParam int size,
             HttpServletResponse response,
             HttpServletRequest request) {
         try {
-            int page = requestListParking.getPage() - 1;
-            int size = requestListParking.getSize();
-            Page<ResponseParking> parkingPage = parkingService.getListParking(page, size);
+            int getPage = page - 1;
+            Page<ResponseParking> parkingPage = parkingService.getListParking(getPage, size);
             return ResponseEntity.ok(parkingPage);
         } catch (ApiRequestException e) {
             throw e;
@@ -108,17 +105,11 @@ public class ParkingController {
 
     @GetMapping("/searchNearbyParking")
     public ResponseEntity<Page<ResponseParking>> searchNearbyParking(
-            @RequestBody RequestSearchNearByParking requestSearchNearByParking,
+            @RequestParam double latitude, @RequestParam double longitude, @RequestParam int page, @RequestParam int size, @RequestParam String sortBy, @RequestParam double radius,
             HttpServletResponse response,
             HttpServletRequest request
     ) {
         try {
-            double latitude = requestSearchNearByParking.getLatitude();
-            double longitude = requestSearchNearByParking.getLongitude();
-            int page = requestSearchNearByParking.getPage() - 1;
-            int size = requestSearchNearByParking.getSize();
-            String sortBy = requestSearchNearByParking.getSortBy();
-            double radius = requestSearchNearByParking.getRadius();
             Page<ResponseParking> listParking = parkingService.searchNearbyParking(latitude, longitude, page, size, sortBy, radius);
             return ResponseEntity.ok(listParking);
         } catch (ApiRequestException e) {

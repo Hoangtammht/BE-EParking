@@ -1,8 +1,13 @@
 package com.eparking.eparking.service.interf;
 
+import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
+import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.ResponseUser;
+import com.eparking.eparking.domain.resquest.RequestCreateUser;
 import com.eparking.eparking.domain.resquest.UpdateUser;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -12,7 +17,11 @@ public interface UserService {
 
     User updateUserByPhoneNumber(UpdateUser updateUser);
 
-    User createSupplier(User user);
+    User createUser(RequestCreateUser user);
+
+    User getUserProfile();
+
+    List<UserRole> getRoleByUserID();
 
     void updateWalletForUser(String responseCode,Long wallet);
 }

@@ -1,8 +1,11 @@
 package com.eparking.eparking.service.impl;
 
 import com.eparking.eparking.dao.ReservationMapper;
+import com.eparking.eparking.domain.Parking;
 import com.eparking.eparking.domain.Reservation;
+import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.domain.response.ResponseReservation;
+import com.eparking.eparking.domain.resquest.RequestReservation;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ReservationService;
 import com.eparking.eparking.service.interf.UserService;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -45,6 +49,19 @@ public class ReservationImpl implements ReservationService {
             return new PageImpl<>(RepoReservation,pageable,totalCount);
         }catch (Exception e){
             throw new ApiRequestException("Failed to get the list order by this user: " + e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseReservation createReservation(RequestReservation requestReservation) {
+        try {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
+                reservationMapper.createReservation(requestReservation, userID);
+                return reservationMapper.getNewlyInsertedReservation();
+            } catch (Exception e) {
+                throw new ApiRequestException("Failed to create reservation: " + e);
         }
     }
 }

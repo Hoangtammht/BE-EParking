@@ -7,6 +7,7 @@ import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.ResponseUser;
 import com.eparking.eparking.domain.resquest.LoginUser;
+import com.eparking.eparking.domain.resquest.RequestCreateUser;
 import com.eparking.eparking.domain.resquest.UpdateUser;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.RoleService;
@@ -14,7 +15,6 @@ import com.eparking.eparking.service.interf.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -88,22 +88,41 @@ public class UserController {
         try {
             User updatedUser = userService.updateUserByPhoneNumber(updateUser);
             return ResponseEntity.ok().body(updatedUser);
-        } catch (Exception e) {
-            throw new ApiRequestException("Cannot update the Information'User");
+        } catch (ApiRequestException e) {
+            throw e;
         }
     }
 
-    @PostMapping("/registerSupplier")
-    public ResponseEntity<User> registerSupplier(@RequestBody User user,
+    @PostMapping("/registerUser")
+    public ResponseEntity<User> createUser(@RequestBody RequestCreateUser user,
                                                  HttpServletResponse response,
                                                  HttpServletRequest request) {
         try {
-            User newSupplier = userService.createSupplier(user);
+            User newSupplier = userService.createUser(user);
             return ResponseEntity.ok().body(newSupplier);
         } catch (ApiRequestException e) {
             throw e;
         }
     }
 
+    @GetMapping("/getUserProfile")
+    public ResponseEntity<User> getUserProfile(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            User newSupplier = userService.getUserProfile();
+            return ResponseEntity.ok().body(newSupplier);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
+    @GetMapping("/getRoleByUserID")
+    public ResponseEntity<List<UserRole>> getRoleByUserID(HttpServletResponse response, HttpServletRequest request){
+        try {
+            List<UserRole> listRole = userService.getRoleByUserID();
+            return ResponseEntity.ok().body(listRole);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
 
 }

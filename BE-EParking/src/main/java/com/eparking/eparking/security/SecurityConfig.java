@@ -35,11 +35,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers(
                 "/user/loginUser/**",
-                "/user/registerSupplier/**",
+                "/user/registerUser/**",
                 "/car/**",
-                "/parking/getParkingDetail",
+                "/parking/getParkingDetail/**",
                 "/parking/getListParking",
                 "/parking/searchNearbyParking",
+                "/reservation/createReservation",
                 "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**"
         ).permitAll();
         http.authorizeRequests().antMatchers(PUT, "/user/updateUser").hasAnyAuthority("ROLE_SUPPLIER", "ROLE_CUSTOMER");
@@ -52,6 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET,"/reservation/getListOrder").hasAnyAuthority("ROLE_CUSTOMER");
         http.authorizeRequests().antMatchers(GET,"/payment/createPayment").hasAnyAuthority("ROLE_CUSTOMER");
         http.authorizeRequests().antMatchers(GET,"/payment/updateWallet").hasAnyAuthority("ROLE_CUSTOMER");
+        http.authorizeRequests().antMatchers(POST,"/reservation/createReservation").hasAnyAuthority("ROLE_CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/user/getUserProfile").hasAnyAuthority("ROLE_SUPPLIER", "ROLE_CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/user/getRoleByUserID").hasAnyAuthority("ROLE_SUPPLIER", "ROLE_CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/reservation/createReservation").hasAnyAuthority("ROLE_CUSTOMER");
+
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
