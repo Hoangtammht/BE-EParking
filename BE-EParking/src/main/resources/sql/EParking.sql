@@ -59,7 +59,8 @@ CREATE TABLE User (
     password varchar(200),
     fullName nvarchar(256),
     email varchar(100),
-    identifyCard varchar(20)
+    identifyCard varchar(20),
+    wallet BIGINT
 );
 
 CREATE TABLE CarDetail (
