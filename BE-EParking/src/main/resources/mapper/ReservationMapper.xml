@@ -41,7 +41,7 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="getResponseReservationByReservationID" resultType="com.eparking.eparking.domain.response.ResponseReservation">
+    <select id="getReservationDetail" resultType="com.eparking.eparking.domain.response.ResponseReservation">
         SELECT
         reserveID,
         R.userID,
@@ -53,7 +53,8 @@
         startDateTime,
         endDatetime,
         R.carID,
-        licensePlate
+        licensePlate,
+        totalPrice
         FROM Reservation R,Parking P, User U,cardetail C
         WHERE R.parkingID = P.parkingID
         AND R.carID = C.carID
@@ -89,4 +90,10 @@
         AND R.userID = U.userID
         AND R.reserveID = (SELECT LAST_INSERT_ID())
     </select>
+
+    <update id="updateReservationStatus" parameterType="map">
+        UPDATE Reservation
+        SET statusID = #{status}
+        WHERE reserveID = #{reserveID}
+    </update>
 </mapper>

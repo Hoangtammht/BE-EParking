@@ -15,6 +15,5 @@ public interface CarDetailMapper {
     void addCar(CarDetail carDetail);
     void removeCar(int carID);
     List<ResponseCarInParking> findCarsInParkingByStatus(int status, int size, int offset);
-
     long getNumberOfReservationByStatus(int status);
 }

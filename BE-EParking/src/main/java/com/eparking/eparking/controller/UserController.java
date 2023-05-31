@@ -108,18 +108,22 @@ public class UserController {
     @GetMapping("/getUserProfile")
     public ResponseEntity<User> getUserProfile(HttpServletResponse response, HttpServletRequest request) {
         try {
-            User newSupplier = userService.getUserProfile();
-            return ResponseEntity.ok().body(newSupplier);
+            User user = userService.getUserProfile();
+            return ResponseEntity.ok().body(user);
         } catch (ApiRequestException e) {
             throw e;
         }
     }
 
     @GetMapping("/getRoleByUserID")
-    public ResponseEntity<List<UserRole>> getRoleByUserID(HttpServletResponse response, HttpServletRequest request){
+    public ResponseEntity<List<String>> getRoleByUserID(HttpServletResponse response, HttpServletRequest request){
         try {
             List<UserRole> listRole = userService.getRoleByUserID();
-            return ResponseEntity.ok().body(listRole);
+            List<String> roleNames = new ArrayList<>();
+            for (UserRole role : listRole) {
+                roleNames.add(role.getRoleName());
+            }
+            return ResponseEntity.ok().body(roleNames);
         } catch (ApiRequestException e) {
             throw e;
         }

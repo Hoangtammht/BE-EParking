@@ -1,6 +1,7 @@
 package com.eparking.eparking.controller;
 
 import com.eparking.eparking.domain.CarDetail;
+import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseCarInParking;
 import com.eparking.eparking.domain.resquest.RequestCarsInParking;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
@@ -52,15 +54,27 @@ public class CarController {
 
     @GetMapping("/showCarsInParkingByStatus")
     public ResponseEntity<Page<ResponseCarInParking>> showCarsInParkingByStatus(
-            @RequestBody RequestCarsInParking requestCarsInParking,
+            @RequestParam int page, @RequestParam int size, @RequestParam int status,
             HttpServletResponse response,
             HttpServletRequest request) {
         try {
-            int status = requestCarsInParking.getStatus();
-            int page = requestCarsInParking.getPage();
-            int size = requestCarsInParking.getSize();
-            Page<ResponseCarInParking> carInParkings = carDetailService.findCarsInParkingByStatus(status, page, size);
+            Page<ResponseCarInParking> carInParkings = carDetailService.findCarsInParkingByStatus(status, page - 1, size);
             return ResponseEntity.ok(carInParkings);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
+    @GetMapping("/getListCarOfUser")
+    public ResponseEntity<List<String>> getListCarOfUser(HttpServletResponse response,
+                                                      HttpServletRequest request){
+        try {
+            List<ResponseCarDetail> listCar = carDetailService.getListCarOfUser();
+            List<String> carsOfUser = new ArrayList<>();
+            for (ResponseCarDetail car : listCar) {
+                carsOfUser.add(car.getLicensePlate());
+            }
+            return ResponseEntity.ok(carsOfUser);
         } catch (ApiRequestException e) {
             throw e;
         }

@@ -69,4 +69,14 @@ public class CarDetailImpl implements CarDetailService {
         }
     }
 
+    @Override
+    public List<ResponseCarDetail> getListCarOfUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
+            return carDetailMapper.findCarDetailByUserID(userID);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to remove car");
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.eparking.eparking.controller;
 import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.domain.response.ResponseReservation;
 import com.eparking.eparking.domain.resquest.RequestReservation;
+import com.eparking.eparking.domain.resquest.RequestUpdateStatusReservation;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,32 @@ public class ReservationController {
         try {
             ResponseReservation createReservations = reservationService.createReservation(requestReservation);
             return ResponseEntity.ok(createReservations);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
+    @GetMapping("/getReservationDetail")
+    public ResponseEntity<ResponseReservation> getReservationDetail(
+            @RequestParam int reserveID,
+            HttpServletResponse response,
+            HttpServletRequest request){
+        try {
+            ResponseReservation reservationDetail = reservationService.getReservationDetail(reserveID);
+            return ResponseEntity.ok(reservationDetail);
+        } catch (ApiRequestException e) {
+            throw e;
+        }
+    }
+
+    @PutMapping("/updateReservationStatus")
+    public ResponseEntity<ResponseReservation> updateReservationStatus(
+            @RequestBody RequestUpdateStatusReservation updateStatusReservation,
+            HttpServletResponse response,
+            HttpServletRequest request){
+        try {
+            ResponseReservation reservation = reservationService.updateReservationStatus(updateStatusReservation.getReserveID(), updateStatusReservation.getStatus());
+            return ResponseEntity.ok(reservation);
         } catch (ApiRequestException e) {
             throw e;
         }

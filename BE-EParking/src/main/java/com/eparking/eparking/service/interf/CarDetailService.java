@@ -15,4 +15,6 @@ public interface CarDetailService {
     void removeCar(int carID);
 
     Page<ResponseCarInParking> findCarsInParkingByStatus(int status, int page, int size);
+
+    List<ResponseCarDetail> getListCarOfUser();
 }
