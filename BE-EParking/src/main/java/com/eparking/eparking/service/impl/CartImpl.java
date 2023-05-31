@@ -25,7 +25,7 @@ public class CartImpl implements CartService {
         int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
             List<Cart> cart = cartMapper.getListCartByUserID(userID);
             if(cart.isEmpty() || cart.size() == 0){
-                throw new ApiRequestException("This cart get by this user is empty!");
+                throw new ApiRequestException("This cart is empty!");
             }
         try{
             return cart;
