@@ -64,4 +64,24 @@ public class ReservationImpl implements ReservationService {
                 throw new ApiRequestException("Failed to create reservation: " + e);
         }
     }
+
+    @Override
+    public ResponseReservation getReservationDetail(int reserveID) {
+        try {
+            return reservationMapper.getReservationDetail(reserveID);
+        }catch (Exception e) {
+            throw new ApiRequestException("Failed to get reservation detail: " + e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseReservation updateReservationStatus(int reserveID, int status) {
+        try {
+            reservationMapper.updateReservationStatus(reserveID, status);
+            return reservationMapper.getReservationDetail(reserveID);
+        }catch (Exception e) {
+            throw new ApiRequestException("Failed to update status reservation: " + e);
+        }
+    }
 }

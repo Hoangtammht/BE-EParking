@@ -9,7 +9,7 @@
         SELECT
             Role.roleName,
             User.phoneNumber
-        FROM UserRole, Role, User
+            FROM UserRole, Role, User
             Where UserRole.roleID = Role.roleID and
             UserRole.userID = User.userID and
             User.phoneNumber =  #{phoneNumber}
