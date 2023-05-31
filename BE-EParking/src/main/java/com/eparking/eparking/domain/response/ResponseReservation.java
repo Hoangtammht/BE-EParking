@@ -22,4 +22,6 @@ public class ResponseReservation {
     private Timestamp endDatetime;
     private int carID;
     private String licensePlate;
+    private int totalPrice;
+
 }

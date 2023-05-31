@@ -81,7 +81,8 @@
         startDateTime,
         endDatetime,
         R.carID,
-        licensePlate
+        licensePlate,
+        totalPrice
         FROM Reservation R,Parking P, User U,cardetail C
         WHERE R.parkingID = P.parkingID
         AND R.carID = C.carID

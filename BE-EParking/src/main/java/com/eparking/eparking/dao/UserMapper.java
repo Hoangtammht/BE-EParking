@@ -16,5 +16,5 @@ public interface UserMapper {
     ResponseUser findResponseUserByPhone(String phoneNumber);
     void updateUserByPhoneNumber(UpdateUser updateUser, String phoneNumber);
     void updateWalletForUser(int userID,Long wallet);
-    void createSupplier(User user);
+    void createSupplier(RequestCreateUser user);
 }
