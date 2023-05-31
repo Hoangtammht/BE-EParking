@@ -36,10 +36,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(
                 "/user/loginUser/**",
                 "/user/registerUser/**",
-                "/car/**",
-                "/parking/getParkingDetail/**",
-                "/parking/getListParking",
-                "/parking/searchNearbyParking",
                 "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**"
         ).permitAll();
         http.authorizeRequests().antMatchers(PUT, "/user/updateUser").hasAnyAuthority("ROLE_SUPPLIER", "ROLE_CUSTOMER");
@@ -61,6 +57,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(POST, "/car/addCar").hasAnyAuthority("ROLE_CUSTOMER");
         http.authorizeRequests().antMatchers(DELETE, "/car/removeCar").hasAnyAuthority("ROLE_CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/car/showCarsInParkingByStatus").hasAnyAuthority("ROLE_CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/parking/getParkingDetail/**").hasAnyAuthority("ROLE_CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/parking/getListParking").hasAnyAuthority("ROLE_CUSTOMER");
+        http.authorizeRequests().antMatchers(GET, "/parking/searchNearbyParking").hasAnyAuthority("ROLE_CUSTOMER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
