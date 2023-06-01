@@ -26,7 +26,12 @@
     <select id="findCarDetailByUserID" resultType="com.eparking.eparking.domain.response.ResponseCarDetail">
         SELECT
             carID,
+            U.userID,
             phoneNumber,
+            fullName,
+            email,
+            identifyCard,
+            wallet,
             licensePlate
         FROM CarDetail C, User U
         where C.userID = U.userID and U.userID = #{userID};

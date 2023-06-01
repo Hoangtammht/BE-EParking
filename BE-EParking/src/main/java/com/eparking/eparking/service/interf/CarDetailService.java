@@ -1,9 +1,7 @@
 package com.eparking.eparking.service.interf;
 
-import com.eparking.eparking.domain.CarDetail;
 import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseCarInParking;
-import com.eparking.eparking.domain.resquest.ResquestCar;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
