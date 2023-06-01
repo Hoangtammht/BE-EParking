@@ -31,7 +31,7 @@ public class CarDetailImpl implements CarDetailService {
 
     @Override
     @Transactional
-    public List<ResponseCarDetail> addCar(String licensePlate) {
+    public ResponseCarDetail addCar(String licensePlate) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
@@ -39,20 +39,23 @@ public class CarDetailImpl implements CarDetailService {
             carDetail.setUserID(userID);
             carDetail.setLicensePlate(licensePlate);
             carDetailMapper.addCar(carDetail);
-            return carDetailMapper.findCarDetailByUserID(userID);
+            return carDetailMapper.findCarDetailByCarID(carDetail.getCarID());
         } catch (Exception e) {
             // Handle the exception appropriately
-            throw new RuntimeException("Failed to add car");
+            throw new ApiRequestException("Failed to add car");
         }
     }
 
 
     @Override
-    public void removeCar(int carID) {
+    @Transactional
+    public ResponseCarDetail removeCar(int carID) {
         try {
+            ResponseCarDetail deleteCar = carDetailMapper.findCarDetailByCarID(carID);
             carDetailMapper.removeCar(carID);
+            return deleteCar;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to remove car");
+            throw new ApiRequestException("Failed to remove car");
         }
     }
 
@@ -74,9 +77,9 @@ public class CarDetailImpl implements CarDetailService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
-            return carDetailMapper.findCarDetailByUserID(userID);
+            return carDetailMapper.findListCarByUserID(userID);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to remove car");
+            throw new ApiRequestException("Failed to get list cars of user");
         }
     }
 }

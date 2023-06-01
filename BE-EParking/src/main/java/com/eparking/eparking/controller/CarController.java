@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -27,29 +29,34 @@ public class CarController {
     private final CarDetailService carDetailService;
 
     @PostMapping("/addCar")
-    public ResponseEntity<List<ResponseCarDetail>> addCar(@RequestBody RequestCar resquestCar,
+    public ResponseEntity<ResponseCarDetail> addCar(@RequestBody RequestCar resquestCar,
                                                           HttpServletResponse response,
                                                           HttpServletRequest request) {
         try {
             URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/car/addCar")
                     .toUriString());
-            List<ResponseCarDetail> addedCars = carDetailService.addCar(resquestCar.getLicensePlate());
-            return ResponseEntity.created(uri).body(addedCars);
-        } catch (Exception e) {
-            throw new ApiRequestException("Oops cannot add Information'Car to user");
+            ResponseCarDetail addedCar = carDetailService.addCar(resquestCar.getLicensePlate());
+            return ResponseEntity.created(uri).body(addedCar);
+        } catch (ApiRequestException e) {
+            throw e;
         }
     }
 
     @DeleteMapping("/removeCar")
-    public void removeCar(@RequestBody DeleteCar deleteCar,
-                          HttpServletResponse response,
-                          HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> removeCar(@RequestBody DeleteCar deleteCar,
+                                                         HttpServletResponse response,
+                                                         HttpServletRequest request) {
         try {
-            carDetailService.removeCar(deleteCar.getCarID());
-        } catch (Exception e) {
-            throw new ApiRequestException("Oops cannot remove car of user");
+            ResponseCarDetail deletedCar = carDetailService.removeCar(deleteCar.getCarID());
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("message", "Car successfully removed");
+            responseMap.put("deletedCar", deletedCar);
+            return ResponseEntity.ok(responseMap);
+        } catch (ApiRequestException e) {
+            throw e;
         }
     }
+
 
     @GetMapping("/showCarsInParkingByStatus")
     public ResponseEntity<Page<ResponseCarInParking>> showCarsInParkingByStatus(

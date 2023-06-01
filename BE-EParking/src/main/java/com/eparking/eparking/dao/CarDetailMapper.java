@@ -10,9 +10,11 @@ import java.util.List;
 @Mapper
 public interface CarDetailMapper {
 
-    List<ResponseCarDetail> findCarDetailByUserID(int userID);
+    List<ResponseCarDetail> findListCarByUserID(int userID);
     void addCar(CarDetail carDetail);
     void removeCar(int carID);
     List<ResponseCarInParking> findCarsInParkingByStatus(int status, int size, int offset);
     long getNumberOfReservationByStatus(int status);
+    ResponseCarDetail findCarDetailByCarID(int carID);
+
 }

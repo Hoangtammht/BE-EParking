@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface CarDetailService {
 
-    List<ResponseCarDetail> addCar(String licensePlate);
+    ResponseCarDetail addCar(String licensePlate);
 
-    void removeCar(int carID);
+    ResponseCarDetail removeCar(int carID);
 
     Page<ResponseCarInParking> findCarsInParkingByStatus(int status, int page, int size);
 
