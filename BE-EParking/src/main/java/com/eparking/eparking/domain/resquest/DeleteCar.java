@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResquestCar {
-    private String phoneNumber;
-    private String licensePlate;
+public class DeleteCar {
+    private int carID;
 
 }

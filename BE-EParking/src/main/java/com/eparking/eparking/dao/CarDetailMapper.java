@@ -3,7 +3,6 @@ package com.eparking.eparking.dao;
 import com.eparking.eparking.domain.CarDetail;
 import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseCarInParking;
-import com.eparking.eparking.domain.resquest.ResquestCar;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

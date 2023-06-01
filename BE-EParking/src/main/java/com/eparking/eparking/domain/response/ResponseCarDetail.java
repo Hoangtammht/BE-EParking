@@ -9,7 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseCarDetail {
     private int carID;
+    private int userID;
     private String phoneNumber;
+    private String fullName;
+    private String email;
+    private String identifyCard;
+    private  Long wallet;
     private String licensePlate;
 
 }
