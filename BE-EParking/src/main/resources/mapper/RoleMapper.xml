@@ -29,4 +29,11 @@
         AND User.phoneNumber = #{phoneNumber};
     </select>
 
+    <select id="findRoleForUser" resultType="com.eparking.eparking.domain.Role">
+        SELECT R.roleID, R.roleName
+        FROM UserRole,Role R
+        WHERE UserRole.userID = #{userID}
+        AND UserRole.roleID = R.roleID
+    </select>
+
 </mapper>

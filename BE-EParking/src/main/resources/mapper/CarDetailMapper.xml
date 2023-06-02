@@ -23,6 +23,13 @@
         <result property="totalPrice" column="totalPrice" />
     </resultMap>
 
+    <resultMap id = "resultCarRe" type = "com.eparking.eparking.domain.CarDetail">
+        <result property = "carID" column = "carID"/>
+        <result property = "phoneNumber" column = "phoneNumber"/>
+        <result property = "licensePlate" column = "licensePlate"/>
+    </resultMap>
+
+
     <select id="findCarDetailByUserID" resultType="com.eparking.eparking.domain.response.ResponseCarDetail">
         SELECT
             carID,
@@ -30,6 +37,13 @@
             licensePlate
         FROM CarDetail C, User U
         where C.userID = U.userID and U.userID = #{userID};
+    </select>
+    <select id="findCarResponselByUserID" resultMap="resultCarRe">
+        SELECT
+        carID,
+        licensePlate
+        FROM CarDetail
+        WHERE userID = #{userID};
     </select>
 
     <insert id="addCar" useGeneratedKeys="true" keyProperty="carID" parameterType="com.eparking.eparking.domain.CarDetail" >

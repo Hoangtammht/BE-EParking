@@ -13,7 +13,7 @@
             fullName,
             email,
             identifyCard,
-            wallet
+            balance
         FROM User
         where phoneNumber = #{phoneNumber};
     </select>
@@ -24,27 +24,30 @@
             User.phoneNumber,
             fullName,
             email,
-            identifyCard
+            identifyCard,
+            balance
         FROM User
         WHERE User.phoneNumber = #{phoneNumber}
     </select>
 
-    <update id="updateUserByPhoneNumber" parameterType = "com.eparking.eparking.domain.User">
-        UPDATE User SET
+    <update id="updateUserByUserID" parameterType = "com.eparking.eparking.domain.resquest.UpdateUser" >
+        UPDATE User
+        SET
             fullName = #{updateUser.fullName},
-            email = #{updateUser.email},
-            identifyCard = #{updateUser.identifyCard}
-        WHERE phoneNumber = #{phoneNumber};
+            identifyCard = #{updateUser.identifyCard},
+            password = #{updateUser.password},
+            phoneNumber = #{updateUser.phoneNumber}
+        WHERE userID = #{userID};
     </update>
 
     <insert id="createSupplier" parameterType="com.eparking.eparking.domain.User" >
-        Insert into User (phoneNumber, password, fullName, email, identifyCard)
-        values (#{phoneNumber},#{password},#{fullName},#{email},#{identifyCard})
+        Insert into User (phoneNumber, password, fullName,identifyCard,balance)
+        values (#{phoneNumber},#{password},#{fullName},#{identifyCard},#{balance})
     </insert>
 
     <update id="updateWalletForUser" parameterType="com.eparking.eparking.domain.User" >
         UPDATE User
-        SET wallet = #{wallet}
+        SET balance = #{balance}
         WHERE userID = #{userID}
     </update>
 </mapper>

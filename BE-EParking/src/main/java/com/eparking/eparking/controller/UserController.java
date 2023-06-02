@@ -2,9 +2,14 @@ package com.eparking.eparking.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.eparking.eparking.dao.CarDetailMapper;
+import com.eparking.eparking.dao.ParkingMapper;
+import com.eparking.eparking.dao.RoleMapper;
 import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
+import com.eparking.eparking.domain.response.ResponseCar;
+import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.domain.response.ResponseUser;
 import com.eparking.eparking.domain.resquest.LoginUser;
 import com.eparking.eparking.domain.resquest.RequestCreateUser;
@@ -39,6 +44,9 @@ public class UserController {
     private final RoleService roleService;
 
     private final AuthenticationManager authenticationManager;
+    private final RoleMapper roleMapper;
+    private final CarDetailMapper carDetailMapper;
+    private final ParkingMapper parkingMapper;
     @Value("${SECRET_KEY}")
     private String secret;
 
@@ -54,6 +62,7 @@ public class UserController {
             String name = authentication.getName();
             User user = userService.findUserByPhoneNumber(name);
             List<UserRole> userRole = roleService.findRoleByPhoneNumber(user.getPhoneNumber());
+            List<Role> userRoleRe = roleMapper.findRoleForUser(user.getUserID());
             List<String> roleNames = new ArrayList<>();
             for (UserRole role : userRole) {
                 roleNames.add(role.getRoleName());
@@ -65,7 +74,12 @@ public class UserController {
                     .withClaim("roles", roleNames)
                     .sign(algorithm);
             ResponseUser responseUser = userService.findResponseUserByPhone(user.getPhoneNumber());
-            responseUser.setRoleName(roleNames);
+            responseUser.setRoleName(userRoleRe);
+            responseUser.setPassword(user.getPassword());
+            List<ResponseCar> carDetailList = carDetailMapper.findCarResponselByUserID(user.getUserID());
+            List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
+            responseUser.setCarList(carDetailList);
+            responseUser.setParkingList(parkingList);
             Map<String, Object> tokens = new HashMap<>();
             tokens.put("access_token", access_token);
             tokens.put("User", responseUser);
@@ -82,11 +96,11 @@ public class UserController {
     }
 
     @PutMapping("/updateUser")
-    public ResponseEntity<User> updateUser(@RequestBody UpdateUser updateUser,
+    public ResponseEntity<ResponseUser> updateUser(@RequestBody UpdateUser updateUser,
                                            HttpServletResponse response,
                                            HttpServletRequest request) {
         try {
-            User updatedUser = userService.updateUserByPhoneNumber(updateUser);
+            ResponseUser updatedUser = userService.updateUserByUserID(updateUser);
             return ResponseEntity.ok().body(updatedUser);
         } catch (ApiRequestException e) {
             throw e;
@@ -94,11 +108,11 @@ public class UserController {
     }
 
     @PostMapping("/registerUser")
-    public ResponseEntity<User> createUser(@RequestBody RequestCreateUser user,
+    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestCreateUser user,
                                                  HttpServletResponse response,
                                                  HttpServletRequest request) {
         try {
-            User newSupplier = userService.createUser(user);
+            ResponseUser newSupplier = userService.createUser(user);
             return ResponseEntity.ok().body(newSupplier);
         } catch (ApiRequestException e) {
             throw e;
@@ -106,9 +120,9 @@ public class UserController {
     }
 
     @GetMapping("/getUserProfile")
-    public ResponseEntity<User> getUserProfile(HttpServletResponse response, HttpServletRequest request) {
+    public ResponseEntity<ResponseUser> getUserProfile(HttpServletResponse response, HttpServletRequest request) {
         try {
-            User newSupplier = userService.getUserProfile();
+            ResponseUser newSupplier = userService.getUserProfile();
             return ResponseEntity.ok().body(newSupplier);
         } catch (ApiRequestException e) {
             throw e;
@@ -124,5 +138,4 @@ public class UserController {
             throw e;
         }
     }
-
 }
