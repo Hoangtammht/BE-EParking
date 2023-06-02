@@ -125,7 +125,7 @@ public class PaymentService {
                     if (checkOrderStatus) {
                         if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
 
-                            userService.updateWalletForUser(request.getParameter("vnp_ResponseCode"),Long.valueOf(request.getParameter("vnp_Amount")));
+                            userService.updateWalletForUser(request.getParameter("vnp_ResponseCode"),Double.valueOf(request.getParameter("vnp_Amount")));
                         } else {
 
                             return ResponseEntity.ok("{\"RspCode\":\"00\",\"Message\":\"Something wrong here\"}");

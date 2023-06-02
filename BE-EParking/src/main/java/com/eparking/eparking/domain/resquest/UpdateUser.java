@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateUser {
     private String fullName;
-    private String email;
     private String identifyCard;
+    private String password;
+    private String phoneNumber;
 
 }

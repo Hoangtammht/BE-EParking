@@ -15,13 +15,13 @@ public interface UserService {
 
     ResponseUser findResponseUserByPhone(String phoneNumber);
 
-    User updateUserByPhoneNumber(UpdateUser updateUser);
+    ResponseUser updateUserByUserID(UpdateUser updateUser);
 
-    User createUser(RequestCreateUser user);
+    ResponseUser createUser(RequestCreateUser user);
 
-    User getUserProfile();
+    ResponseUser getUserProfile();
 
     List<UserRole> getRoleByUserID();
 
-    void updateWalletForUser(String responseCode,Long wallet);
+    void updateWalletForUser(String responseCode,Double Balance);
 }

@@ -119,10 +119,26 @@
     LIMIT #{size} OFFSET #{offset}
     ]]>
     </select>
-
-
-
-
+    <select id="getListParkingByUserID" resultType="com.eparking.eparking.domain.response.ResponseParking">
+        SELECT
+        parkingID,
+        P.userID,
+        phoneNumber,
+        methodName,
+        parkingName,
+        description,
+        images,
+        address,
+        latitude,
+        longitude,
+        pricing,
+        park,
+        status
+        FROM Parking P, Method M, User U
+        WHERE P.methodID = M.methodID
+        AND P.userID = #{userID}
+        AND U.userID = P.userID
+    </select>
 
 
 </mapper>

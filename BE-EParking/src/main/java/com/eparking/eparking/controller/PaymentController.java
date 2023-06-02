@@ -36,7 +36,7 @@ public class PaymentController {
     }
         @PutMapping("/updateWallet")
     public void updateWallet(@RequestParam(value = "vpn_ResponseCode") String ResponseCode,
-                             @RequestParam(value = "vpn_Amount") Long amount){
+                             @RequestParam(value = "vpn_Amount") Double amount){
         try{
             UserService.updateWalletForUser(ResponseCode,amount);
         }catch (ApiRequestException e){

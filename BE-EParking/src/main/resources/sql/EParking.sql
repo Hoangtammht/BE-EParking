@@ -60,7 +60,7 @@ CREATE TABLE User (
     fullName nvarchar(256),
     email varchar(100),
     identifyCard varchar(20),
-    wallet BIGINT
+    balance DOUBLE
 );
 
 CREATE TABLE CarDetail (

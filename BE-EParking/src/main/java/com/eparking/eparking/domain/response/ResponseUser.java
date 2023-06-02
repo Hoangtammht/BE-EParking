@@ -1,5 +1,8 @@
 package com.eparking.eparking.domain.response;
 
+import com.eparking.eparking.domain.CarDetail;
+import com.eparking.eparking.domain.Role;
+import com.eparking.eparking.domain.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,8 +16,10 @@ public class ResponseUser {
     private int userID;
     private String phoneNumber;
     private String fullName;
-    private String email;
     private String identifyCard;
-    private List<String> roleName;
-
+    private List<Role> roleName;
+    private String password;
+    private double balance;
+    private List<ResponseCar> carList;
+    private List<ResponseParking> parkingList;
 }

@@ -1,6 +1,7 @@
 package com.eparking.eparking.dao;
 
 import com.eparking.eparking.domain.CarDetail;
+import com.eparking.eparking.domain.response.ResponseCar;
 import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseCarInParking;
 import com.eparking.eparking.domain.resquest.ResquestCar;
@@ -17,4 +18,5 @@ public interface CarDetailMapper {
     List<ResponseCarInParking> findCarsInParkingByStatus(int status, int size, int offset);
 
     long getNumberOfReservationByStatus(int status);
+    List<ResponseCar> findCarResponselByUserID(int userID);
 }

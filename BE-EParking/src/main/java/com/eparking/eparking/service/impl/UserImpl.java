@@ -1,15 +1,21 @@
 package com.eparking.eparking.service.impl;
 
+import com.eparking.eparking.dao.CarDetailMapper;
+import com.eparking.eparking.dao.ParkingMapper;
+import com.eparking.eparking.dao.RoleMapper;
 import com.eparking.eparking.dao.UserMapper;
+import com.eparking.eparking.domain.CarDetail;
 import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
+import com.eparking.eparking.domain.response.ResponseCar;
+import com.eparking.eparking.domain.response.ResponseCarDetail;
+import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.domain.response.ResponseUser;
 import com.eparking.eparking.domain.resquest.RequestCreateUser;
 import com.eparking.eparking.domain.resquest.UpdateUser;
 import com.eparking.eparking.exception.ApiRequestException;
-import com.eparking.eparking.service.interf.RoleService;
-import com.eparking.eparking.service.interf.UserService;
+import com.eparking.eparking.service.interf.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -36,6 +42,9 @@ public class UserImpl implements UserDetailsService, UserService {
     private final UserMapper userMapper;
     
     private final RoleService roleService;
+    private final ParkingMapper parkingMapper;
+    private final CarDetailMapper carDetailMapper;
+    private final RoleMapper roleMapper;
 
 
     @Override
@@ -66,48 +75,97 @@ public class UserImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User updateUserByPhoneNumber(UpdateUser updateUser) {
+    public ResponseUser updateUserByUserID(UpdateUser updateUser) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String phoneNumber = authentication.getName();
-            userMapper.updateUserByPhoneNumber(updateUser, phoneNumber);
-            return findUserByPhoneNumber(phoneNumber);
+            User user = userMapper.findUserByPhoneNumber(phoneNumber);
+
+            if (updateUser.getFullName() == null) {
+                updateUser.setFullName(user.getFullName());
+            }
+            if (updateUser.getIdentifyCard() == null) {
+                updateUser.setIdentifyCard(user.getIdentifyCard());
+            }
+            if (updateUser.getPassword() == null) {
+                updateUser.setPassword(user.getPassword());
+            }
+            if (updateUser.getPhoneNumber() == null) {
+                updateUser.setPhoneNumber(user.getPhoneNumber());
+            }
+
+            if (updateUser.getPhoneNumber() != null && !updateUser.getPhoneNumber().equals(user.getPhoneNumber())) {
+                User existingUser = userMapper.findUserByPhoneNumber(updateUser.getPhoneNumber());
+                if (existingUser != null) {
+                    throw new ApiRequestException("The user already exists");
+                }
+                user.setPhoneNumber(updateUser.getPhoneNumber());
+            }
+
+            if (updateUser.getPassword() != null) {
+                updateUser.setPassword(passwordEncoder.encode(updateUser.getPassword()));
+            }
+
+            userMapper.updateUserByUserID(updateUser, user.getUserID());
+
+            List<ResponseCar> carDetailList = carDetailMapper.findCarResponselByUserID(user.getUserID());
+            List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
+            List<Role> userRoles = roleMapper.findRoleForUser(user.getUserID());
+
+            ResponseUser responseUser = new ResponseUser(
+                    user.getUserID(),
+                    updateUser.getPhoneNumber(),
+                    updateUser.getFullName(),
+                    updateUser.getIdentifyCard(),
+                    userRoles,
+                    updateUser.getPassword(),
+                    user.getBalance(),
+                    carDetailList,
+                    parkingList
+            );
+            return responseUser;
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to update user by phone number");
+            throw new ApiRequestException("Failed to update user by userID");
         }
     }
 
+
     @Override
     @Transactional
-    public User createUser(RequestCreateUser user) {
+    public ResponseUser createUser(RequestCreateUser user) {
         User existingUser = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
+        ResponseUser responseUser = null;
         try {
             if (existingUser != null) {
-                    throw new ApiRequestException("The user is already exists");
+                throw new ApiRequestException("The user is already exists");
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userMapper.createSupplier(user);
             User newUser = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
-            for (Integer roleID: user.getUserRoles()) {
+            for (Integer roleID : user.getUserRoles()) {
                 roleService.insertUserRole(roleID, newUser.getUserID());
             }
+            List<ResponseCar> carDetailList = carDetailMapper.findCarResponselByUserID(newUser.getUserID());
+            List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(newUser.getUserID());
+            List<Role> userRoles = roleMapper.findRoleForUser(newUser.getUserID());
+            responseUser = new ResponseUser(newUser.getUserID(), newUser.getPhoneNumber(), newUser.getFullName(), newUser.getIdentifyCard(),userRoles, newUser.getPassword(), newUser.getBalance(),carDetailList,parkingList);
         } catch (Exception e) {
             throw new ApiRequestException("Failed to create user: " + e);
         }
-        return findUserByPhoneNumber(user.getPhoneNumber());
+        return responseUser;
     }
 
     @Override
-    public void updateWalletForUser(String responseCode,Long wallet) {
+    public void updateWalletForUser(String responseCode,Double Balance) {
         try{
             if(responseCode.equals("00")){
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 User user = userMapper.findUserByPhoneNumber(authentication.getName());
-                user.getWallet();
-                if(user.getWallet() == null ){
-                    user.setWallet(0L);
+                user.getBalance();
+                if(user.getBalance() == 0.0 ){
+                    user.setBalance(0.0);
                 }
-                Long userWallet = user.getWallet() + wallet;
+                Double userWallet = user.getBalance() + Balance;
                 userMapper.updateWalletForUser(userMapper.findUserByPhoneNumber(authentication.getName()).getUserID(),userWallet);
             }else {
                 throw new ApiRequestException("Failed to update wallet for user because responseCode invaid: ");
@@ -118,10 +176,15 @@ public class UserImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User getUserProfile() {
+    public ResponseUser getUserProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String phoneNumber = authentication.getName();
-        return findUserByPhoneNumber(phoneNumber);
+        User user = findUserByPhoneNumber(phoneNumber);
+        List<ResponseCar> carDetailList = carDetailMapper.findCarResponselByUserID(user.getUserID());
+        List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
+        List<Role> userRoles = roleMapper.findRoleForUser(user.getUserID());
+        ResponseUser responseUser = new ResponseUser(user.getUserID(), user.getPhoneNumber(),user.getFullName(),user.getIdentifyCard(),userRoles,user.getPassword(),user.getBalance(),carDetailList,parkingList);
+        return responseUser;
     }
 
     @Override

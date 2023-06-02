@@ -11,4 +11,5 @@ public interface RoleMapper {
     List<UserRole> findRoleByPhoneNumber(String phoneNumber);
     void insertUserRole(int roleID, int userID);
     boolean findRoleIDForUser(String phoneNumber);
+    List<Role> findRoleForUser(int userID);
 }

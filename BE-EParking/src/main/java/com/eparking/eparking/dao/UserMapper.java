@@ -14,7 +14,7 @@ import java.util.List;
 public interface UserMapper {
     User findUserByPhoneNumber(String phoneNumber);
     ResponseUser findResponseUserByPhone(String phoneNumber);
-    void updateUserByPhoneNumber(UpdateUser updateUser, String phoneNumber);
-    void updateWalletForUser(int userID,Long wallet);
+    void updateUserByUserID(UpdateUser updateUser, int userID);
+    void updateWalletForUser(int userID,Double balance);
     void createSupplier(RequestCreateUser user);
 }
