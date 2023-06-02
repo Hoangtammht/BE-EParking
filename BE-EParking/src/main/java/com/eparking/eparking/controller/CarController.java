@@ -1,9 +1,14 @@
 package com.eparking.eparking.controller;
 
+import com.eparking.eparking.dao.CarDetailMapper;
 import com.eparking.eparking.domain.CarDetail;
+import com.eparking.eparking.domain.response.ResponseCar;
 import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseCarInParking;
+import com.eparking.eparking.domain.response.ResponseCart;
+import com.eparking.eparking.domain.resquest.RequestCarID;
 import com.eparking.eparking.domain.resquest.RequestCarsInParking;
+import com.eparking.eparking.domain.resquest.ResquestCar;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.CarDetailService;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +29,16 @@ import java.util.List;
 public class CarController {
 
     private final CarDetailService carDetailService;
+    private final CarDetailMapper carDetailMapper;
 
     @PostMapping("/addCar")
-    public ResponseEntity<List<ResponseCarDetail>> addCar(@RequestParam String licensePlate,
+    public ResponseEntity<ResponseCarDetail> addCar(@RequestBody ResquestCar resquestCar,
                                                           HttpServletResponse response,
                                                           HttpServletRequest request) {
         try {
             URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/car/addCar")
                     .toUriString());
-            List<ResponseCarDetail> addedCars = carDetailService.addCar(licensePlate);
+            ResponseCarDetail addedCars = carDetailService.addCar(resquestCar.getLicensePlate());
             return ResponseEntity.created(uri).body(addedCars);
         } catch (Exception e) {
             throw new ApiRequestException("Oops cannot add Information'Car to user");
@@ -40,11 +46,13 @@ public class CarController {
     }
 
     @DeleteMapping("/removeCar")
-    public void removeCar(@RequestParam int carID,
+    public ResponseEntity<ResponseCarDetail> removeCar(@RequestBody RequestCarID requestCarID,
                           HttpServletResponse response,
                           HttpServletRequest request) {
         try {
-            carDetailService.removeCar(carID);
+            ResponseCarDetail carDetail = carDetailMapper.findCarDetailByCarID(requestCarID.getCarID());
+            carDetailService.removeCar(requestCarID.getCarID());
+            return ResponseEntity.ok(carDetail);
         } catch (Exception e) {
             throw new ApiRequestException("Oops cannot remove car of user");
         }
@@ -65,5 +73,12 @@ public class CarController {
             throw e;
         }
     }
-
+    @GetMapping("/getListCarByUser")
+    public ResponseEntity<List<ResponseCarDetail>> getListCarByUserID(){
+        try{
+            return ResponseEntity.ok(carDetailService.findCarDetailByUserID());
+        }catch (Exception e){
+            throw e;
+        }
+    }
 }

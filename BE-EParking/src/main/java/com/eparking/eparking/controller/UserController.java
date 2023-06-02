@@ -11,6 +11,7 @@ import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.ResponseCar;
 import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.domain.response.ResponseUser;
+import com.eparking.eparking.domain.response.ResponseUserRegister;
 import com.eparking.eparking.domain.resquest.LoginUser;
 import com.eparking.eparking.domain.resquest.RequestCreateUser;
 import com.eparking.eparking.domain.resquest.UpdateUser;
@@ -75,7 +76,6 @@ public class UserController {
                     .sign(algorithm);
             ResponseUser responseUser = userService.findResponseUserByPhone(user.getPhoneNumber());
             responseUser.setRoleName(userRoleRe);
-            responseUser.setPassword(user.getPassword());
             List<ResponseCar> carDetailList = carDetailMapper.findCarResponselByUserID(user.getUserID());
             List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
             responseUser.setCarList(carDetailList);
@@ -108,12 +108,13 @@ public class UserController {
     }
 
     @PostMapping("/registerUser")
-    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestCreateUser user,
-                                                 HttpServletResponse response,
-                                                 HttpServletRequest request) {
+    public ResponseEntity<ResponseUserRegister> createUser(@RequestBody RequestCreateUser user,
+                                                           HttpServletResponse response,
+                                                           HttpServletRequest request) {
         try {
             ResponseUser newSupplier = userService.createUser(user);
-            return ResponseEntity.ok().body(newSupplier);
+            ResponseUserRegister responseUserRegister = new ResponseUserRegister(newSupplier.getPhoneNumber(), newSupplier.getFullName(), newSupplier.getIdentifyCard(), newSupplier.getRoleName(),newSupplier.getBalance());
+            return ResponseEntity.ok().body(responseUserRegister);
         } catch (ApiRequestException e) {
             throw e;
         }

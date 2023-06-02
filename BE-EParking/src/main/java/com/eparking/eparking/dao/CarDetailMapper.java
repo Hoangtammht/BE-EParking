@@ -19,4 +19,7 @@ public interface CarDetailMapper {
 
     long getNumberOfReservationByStatus(int status);
     List<ResponseCar> findCarResponselByUserID(int userID);
+
+    ResponseCarDetail getNewlyCar();
+    ResponseCarDetail findCarDetailByCarID(int carID);
 }

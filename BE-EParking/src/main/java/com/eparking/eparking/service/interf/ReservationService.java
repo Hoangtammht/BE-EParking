@@ -11,4 +11,6 @@ public interface ReservationService {
     Reservation getReservationDetailByReservationID(int reserveID);
     Page<ResponseReservation> getListOrderByUserAndStatusID(int statusID, int size, int pag);
     ResponseReservation createReservation(RequestReservation requestReservation);
+    ResponseReservation getResponseReservationByReservationID(int reserveID);
+    ResponseReservation updateStatus(int statusID,int reserveID);
 }
