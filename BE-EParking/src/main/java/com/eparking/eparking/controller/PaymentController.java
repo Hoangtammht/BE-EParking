@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +40,14 @@ public class PaymentController {
         try{
             UserService.updateWalletForUser(ResponseCode,amount);
         }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+    @GetMapping("/IPN")
+    public void handleIPN (HttpServletRequest request){
+        try{
+            paymentService.handleIPN(request);
+        }catch (Exception e){
             throw e;
         }
     }

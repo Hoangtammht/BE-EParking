@@ -17,7 +17,7 @@ public class VNpayConfig {
     public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
     public static String vnp_Version = "2.1.0";
     public static String vnp_Command = "pay";
-
+    public static String vnp_IpnURL = "http://localhost:8080/payment/vnpay_ipn";
     public static String md5(String message) {
         String digest = null;
         try {

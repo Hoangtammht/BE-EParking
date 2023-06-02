@@ -4,14 +4,17 @@ import com.eparking.eparking.dao.UserMapper;
 import com.eparking.eparking.domain.resquest.Payment;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.paymenConfig.VNpayConfig;
+import com.eparking.eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +26,7 @@ import static com.eparking.eparking.paymenConfig.VNpayConfig.vnp_Version;
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentService {
-    private final UserMapper userMapper;
+    private final UserService userService;
     public ResponseEntity<?> createPayment(Payment payment) throws UnsupportedEncodingException {
         try {
             String orderType = payment.getOrdertypeParam();
@@ -35,6 +38,7 @@ public class PaymentService {
             String vnp_TmnCode = VNpayConfig.vnp_TmnCode;
 
             Map<String, String> vnp_Params = new HashMap<>();
+//            vnp_Params.put("vnp_IpnURL",VNpayConfig.vnp_IpnURL);
             vnp_Params.put("vnp_Version", vnp_Version);
             vnp_Params.put("vnp_Command", VNpayConfig.vnp_Command);
             vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
@@ -98,4 +102,43 @@ public class PaymentService {
             throw new ApiRequestException("Fail to create payment action: " + e);
         }
     }
+    public ResponseEntity<String> handleIPN(HttpServletRequest request){
+        try{
+        Map<String, String> fields = new HashMap<>();
+        Enumeration<String> params = request.getParameterNames();
+        while (params.hasMoreElements()) {
+            String fieldName = params.nextElement();
+            String fieldValue = request.getParameter(fieldName);
+            if (fieldValue != null && fieldValue.length() > 0) {
+                fields.put(fieldName, fieldValue);
+            }
+        }
+        String vnp_SecureHash = request.getParameter("vnp_SecureHash");
+        fields.remove("vnp_SecureHashType");
+        fields.remove("vnp_SecureHash");
+
+        // Check checksum
+        String signValue = VNpayConfig.hashAllFields(fields);
+        if (signValue.equals(vnp_SecureHash)) {
+            boolean checkAmount = true; // vnp_Amount is valid (Check vnp_Amount VNPAY returns compared to the amount of the code (vnp_TxnRef) in your database).
+            boolean checkOrderStatus = true; // PaymentStatus = 0 (pending)
+                    if (checkOrderStatus) {
+                        if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
+
+                            userService.updateWalletForUser(request.getParameter("vnp_ResponseCode"),Long.valueOf(request.getParameter("vnp_Amount")));
+                        } else {
+
+                            return ResponseEntity.ok("{\"RspCode\":\"00\",\"Message\":\"Something wrong here\"}");
+                        }
+                        return ResponseEntity.ok("{\"RspCode\":\"00\",\"Message\":\"Confirm Success\"}");
+                    } else {
+                        return ResponseEntity.ok("{\"RspCode\":\"02\",\"Message\":\"Order already confirmed\"}");
+                    }
+                } else {
+                    return ResponseEntity.ok("{\"RspCode\":\"04\",\"Message\":\"Invalid Amount\"}");
+                }
+            } catch (Exception e) {
+                return ResponseEntity.ok("{\"RspCode\":\"99\",\"Message\":\"Unknown error\"}");
+            }
+        }
 }
