@@ -118,7 +118,6 @@ public class UserImpl implements UserDetailsService, UserService {
                     updateUser.getFullName(),
                     updateUser.getIdentifyCard(),
                     userRoles,
-                    updateUser.getPassword(),
                     user.getBalance(),
                     carDetailList,
                     parkingList
@@ -148,7 +147,7 @@ public class UserImpl implements UserDetailsService, UserService {
             List<ResponseCar> carDetailList = carDetailMapper.findCarResponselByUserID(newUser.getUserID());
             List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(newUser.getUserID());
             List<Role> userRoles = roleMapper.findRoleForUser(newUser.getUserID());
-            responseUser = new ResponseUser(newUser.getUserID(), newUser.getPhoneNumber(), newUser.getFullName(), newUser.getIdentifyCard(),userRoles, newUser.getPassword(), newUser.getBalance(),carDetailList,parkingList);
+            responseUser = new ResponseUser(newUser.getUserID(), newUser.getPhoneNumber(), newUser.getFullName(), newUser.getIdentifyCard(),userRoles, newUser.getBalance(),carDetailList,parkingList);
         } catch (Exception e) {
             throw new ApiRequestException("Failed to create user: " + e);
         }
@@ -183,7 +182,7 @@ public class UserImpl implements UserDetailsService, UserService {
         List<ResponseCar> carDetailList = carDetailMapper.findCarResponselByUserID(user.getUserID());
         List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
         List<Role> userRoles = roleMapper.findRoleForUser(user.getUserID());
-        ResponseUser responseUser = new ResponseUser(user.getUserID(), user.getPhoneNumber(),user.getFullName(),user.getIdentifyCard(),userRoles,user.getPassword(),user.getBalance(),carDetailList,parkingList);
+        ResponseUser responseUser = new ResponseUser(user.getUserID(), user.getPhoneNumber(),user.getFullName(),user.getIdentifyCard(),userRoles,user.getBalance(),carDetailList,parkingList);
         return responseUser;
     }
 

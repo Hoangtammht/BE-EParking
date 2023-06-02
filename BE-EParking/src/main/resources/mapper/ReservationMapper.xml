@@ -89,4 +89,9 @@
         AND R.userID = U.userID
         AND R.reserveID = (SELECT LAST_INSERT_ID())
     </select>
+    <update id="updateStatus" parameterType="com.eparking.eparking.domain.response.ResponseReservation">
+        UPDATE Reservation
+        SET statusID = #{statusID}
+        WHERE reserveID = #{reserveID}
+    </update>
 </mapper>

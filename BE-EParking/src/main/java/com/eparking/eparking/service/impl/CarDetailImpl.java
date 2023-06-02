@@ -31,7 +31,7 @@ public class CarDetailImpl implements CarDetailService {
 
     @Override
     @Transactional
-    public List<ResponseCarDetail> addCar(String licensePlate) {
+    public ResponseCarDetail addCar(String licensePlate) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
@@ -39,7 +39,7 @@ public class CarDetailImpl implements CarDetailService {
             carDetail.setUserID(userID);
             carDetail.setLicensePlate(licensePlate);
             carDetailMapper.addCar(carDetail);
-            return carDetailMapper.findCarDetailByUserID(userID);
+            return carDetailMapper.getNewlyCar();
         } catch (Exception e) {
             // Handle the exception appropriately
             throw new RuntimeException("Failed to add car");
@@ -68,5 +68,16 @@ public class CarDetailImpl implements CarDetailService {
             throw new ApiRequestException("Failed to find the list cars by revenue status of Supplier");
         }
     }
+
+    @Override
+    public List<ResponseCarDetail> findCarDetailByUserID() {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            return carDetailMapper.findCarDetailByUserID(userService.findUserByPhoneNumber(authentication.getName()).getUserID());
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get list car by this user");
+        }
+    }
+
 
 }
