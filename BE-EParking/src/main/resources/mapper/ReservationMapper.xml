@@ -83,11 +83,17 @@
         R.carID,
         licensePlate,
         totalPrice
-        FROM Reservation R,Parking P, User U,CarDetail C
-        WHERE R.parkingID = P.parkingID
-        AND R.carID = C.carID
-        AND R.userID = U.userID
-        AND R.reserveID = (SELECT LAST_INSERT_ID())
+        FROM
+        Reservation R
+        INNER JOIN Parking P ON R.parkingID = P.parkingID
+        INNER JOIN User U ON R.userID = U.userID
+        INNER JOIN CarDetail C ON R.carID = C.carID
+        WHERE
+        R.userID = #{userID}
+        AND R.reserveID = (
+        SELECT MAX(reserveID)
+        FROM Reservation
+        WHERE userID = R.userID)
     </select>
     <update id="updateStatus" parameterType="com.eparking.eparking.domain.response.ResponseReservation">
         UPDATE Reservation

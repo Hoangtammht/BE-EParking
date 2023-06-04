@@ -59,7 +59,7 @@ public class ReservationImpl implements ReservationService {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
                 reservationMapper.createReservation(requestReservation, userID);
-                return reservationMapper.getNewlyInsertedReservation();
+                return reservationMapper.getNewlyInsertedReservation(userID);
             } catch (Exception e) {
                 throw new ApiRequestException("Failed to create reservation: " + e);
         }

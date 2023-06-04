@@ -19,5 +19,5 @@ public interface ReservationMapper {
 
     ResponseReservation getResponseReservationByReservationID(int reserveID);
     void updateStatus(int statusID,int reserveID);
-    ResponseReservation getNewlyInsertedReservation();
+    ResponseReservation getNewlyInsertedReservation(int userID);
 }
