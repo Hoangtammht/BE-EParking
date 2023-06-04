@@ -31,7 +31,7 @@
         endDatetime,
         R.carID,
         licensePlate
-        FROM Reservation R,Parking P, User U,cardetail C
+        FROM Reservation R,Parking P, User U,CarDetail C
         WHERE R.parkingID = P.parkingID
         AND R.carID = C.carID
         AND R.userID = #{userID}
@@ -54,7 +54,7 @@
         endDatetime,
         R.carID,
         licensePlate
-        FROM Reservation R,Parking P, User U,cardetail C
+        FROM Reservation R,Parking P, User U,CarDetail C
         WHERE R.parkingID = P.parkingID
         AND R.carID = C.carID
         AND R.userID = U.userID
@@ -83,7 +83,7 @@
         R.carID,
         licensePlate,
         totalPrice
-        FROM Reservation R,Parking P, User U,cardetail C
+        FROM Reservation R,Parking P, User U,CarDetail C
         WHERE R.parkingID = P.parkingID
         AND R.carID = C.carID
         AND R.userID = U.userID

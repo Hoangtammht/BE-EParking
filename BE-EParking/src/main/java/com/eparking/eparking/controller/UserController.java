@@ -70,7 +70,7 @@ public class UserController {
             }
             String access_token = JWT.create()
                     .withSubject(user.getPhoneNumber())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+//                    .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                     .withIssuer(request.getRequestURL().toString())
                     .withClaim("roles", roleNames)
                     .sign(algorithm);
