@@ -19,6 +19,6 @@ public class ResponseUser {
     private String identifyCard;
     private List<Role> roleName;
     private double balance;
-    private List<ResponseCar> carList;
+    private List<ResponseCarDetail> carList;
     private List<ResponseParking> parkingList;
 }

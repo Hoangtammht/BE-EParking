@@ -4,11 +4,9 @@ import com.eparking.eparking.dao.CarDetailMapper;
 import com.eparking.eparking.dao.ParkingMapper;
 import com.eparking.eparking.dao.RoleMapper;
 import com.eparking.eparking.dao.UserMapper;
-import com.eparking.eparking.domain.CarDetail;
 import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
-import com.eparking.eparking.domain.response.ResponseCar;
 import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.domain.response.ResponseUser;
@@ -108,7 +106,7 @@ public class UserImpl implements UserDetailsService, UserService {
 
             userMapper.updateUserByUserID(updateUser, user.getUserID());
 
-            List<ResponseCar> carDetailList = carDetailMapper.findCarResponselByUserID(user.getUserID());
+            List<ResponseCarDetail> carDetailList = carDetailMapper.findCarDetailByUserID(user.getUserID());
             List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
             List<Role> userRoles = roleMapper.findRoleForUser(user.getUserID());
 
@@ -144,7 +142,7 @@ public class UserImpl implements UserDetailsService, UserService {
             for (Integer roleID : user.getUserRoles()) {
                 roleService.insertUserRole(roleID, newUser.getUserID());
             }
-            List<ResponseCar> carDetailList = carDetailMapper.findCarResponselByUserID(newUser.getUserID());
+            List<ResponseCarDetail> carDetailList = carDetailMapper.findCarDetailByUserID(newUser.getUserID());
             List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(newUser.getUserID());
             List<Role> userRoles = roleMapper.findRoleForUser(newUser.getUserID());
             responseUser = new ResponseUser(newUser.getUserID(), newUser.getPhoneNumber(), newUser.getFullName(), newUser.getIdentifyCard(),userRoles, newUser.getBalance(),carDetailList,parkingList);
@@ -179,7 +177,7 @@ public class UserImpl implements UserDetailsService, UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String phoneNumber = authentication.getName();
         User user = findUserByPhoneNumber(phoneNumber);
-        List<ResponseCar> carDetailList = carDetailMapper.findCarResponselByUserID(user.getUserID());
+        List<ResponseCarDetail> carDetailList = carDetailMapper.findCarDetailByUserID(user.getUserID());
         List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
         List<Role> userRoles = roleMapper.findRoleForUser(user.getUserID());
         ResponseUser responseUser = new ResponseUser(user.getUserID(), user.getPhoneNumber(),user.getFullName(),user.getIdentifyCard(),userRoles,user.getBalance(),carDetailList,parkingList);

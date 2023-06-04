@@ -1,11 +1,8 @@
 package com.eparking.eparking.controller;
 
 import com.eparking.eparking.dao.CarDetailMapper;
-import com.eparking.eparking.domain.CarDetail;
-import com.eparking.eparking.domain.response.ResponseCar;
 import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseCarInParking;
-import com.eparking.eparking.domain.response.ResponseCart;
 import com.eparking.eparking.domain.resquest.RequestCarID;
 import com.eparking.eparking.domain.resquest.RequestCarsInParking;
 import com.eparking.eparking.domain.resquest.ResquestCar;
