@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -11,8 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RequestReservation {
     private int parkingID;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDatetime;
+    private Instant startDateTime;
+    private Instant endDatetime;
     private int totalPrice;
     private int statusID;
     private int carID;
