@@ -13,7 +13,7 @@ public class RequestReservation {
     private int parkingID;
     private LocalDateTime startDateTime;
     private LocalDateTime endDatetime;
-    private int totalPrice;
+    private double totalPrice;
     private int statusID;
     private int carID;
 

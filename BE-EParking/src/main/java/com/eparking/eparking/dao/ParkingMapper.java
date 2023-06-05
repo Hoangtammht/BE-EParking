@@ -25,4 +25,5 @@ public interface ParkingMapper {
     List<ResponseParking> searchNearbyParking(double latitude, double longitude, double radius, int size, long offset, String sortBy);
 
     List<ResponseParking> getListParkingByUserID(int userID);
+    void updateParkForParking(int parkingID,int park);
 }
