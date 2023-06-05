@@ -10,6 +10,7 @@ import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.domain.response.ResponseUser;
+import com.eparking.eparking.domain.response.ResponseUserRegister;
 import com.eparking.eparking.domain.resquest.RequestCreateUser;
 import com.eparking.eparking.domain.resquest.UpdateUser;
 import com.eparking.eparking.exception.ApiRequestException;
@@ -187,5 +188,13 @@ public class UserImpl implements UserDetailsService, UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String phoneNumber = authentication.getName();
         return roleService.findRoleByPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public ResponseUserRegister findResponseUserRegisterByUserID(int userID) {
+        ResponseUserRegister responseUserRegister = userMapper.findResponseUserRegisterByUserID(userID);
+        List<Role> userRoles = roleMapper.findRoleForUser(userID);
+        responseUserRegister.setRoleName(userRoles);
+        return responseUserRegister;
     }
 }

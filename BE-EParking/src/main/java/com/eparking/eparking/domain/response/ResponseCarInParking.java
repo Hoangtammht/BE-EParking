@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseCarInParking {
+    private ResponseUserRegister customerInfo;
     private String phoneNumber;
     private String licensePlate;
     private String statusName;
@@ -16,6 +17,7 @@ public class ResponseCarInParking {
     private String methodName;
     private LocalDateTime startDateTime;
     private LocalDateTime endDatetime;
+    private int customerID;
     private int pricing;
     private long totalPrice;
 

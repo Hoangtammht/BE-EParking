@@ -4,6 +4,7 @@ import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.ResponseUser;
+import com.eparking.eparking.domain.response.ResponseUserRegister;
 import com.eparking.eparking.domain.resquest.RequestCreateUser;
 import com.eparking.eparking.domain.resquest.UpdateUser;
 
@@ -24,4 +25,6 @@ public interface UserService {
     List<UserRole> getRoleByUserID();
 
     void updateWalletForUser(String responseCode,Double Balance);
+    ResponseUserRegister findResponseUserRegisterByUserID(int userID);
+
 }
