@@ -4,7 +4,6 @@ import com.eparking.eparking.dao.CarDetailMapper;
 import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseCarInParking;
 import com.eparking.eparking.domain.resquest.RequestCarID;
-import com.eparking.eparking.domain.resquest.RequestCarsInParking;
 import com.eparking.eparking.domain.resquest.ResquestCar;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.CarDetailService;
@@ -57,14 +56,13 @@ public class CarController {
 
     @GetMapping("/showCarsInParkingByStatus")
     public ResponseEntity<Page<ResponseCarInParking>> showCarsInParkingByStatus(
-            @RequestBody RequestCarsInParking requestCarsInParking,
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam int status,
             HttpServletResponse response,
             HttpServletRequest request) {
         try {
-            int status = requestCarsInParking.getStatus();
-            int page = requestCarsInParking.getPage();
-            int size = requestCarsInParking.getSize();
-            Page<ResponseCarInParking> carInParkings = carDetailService.findCarsInParkingByStatus(status, page, size);
+            Page<ResponseCarInParking> carInParkings = carDetailService.findCarsInParkingByStatus(status, page - 1, size);
             return ResponseEntity.ok(carInParkings);
         } catch (ApiRequestException e) {
             throw e;

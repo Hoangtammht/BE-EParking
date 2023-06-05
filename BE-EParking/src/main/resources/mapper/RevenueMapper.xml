@@ -6,7 +6,7 @@
 <mapper namespace="com.eparking.eparking.dao.RevenueMapper">
 
     <select id="calculateParkingRevenueToday" resultType="double">
-        SELECT SUM(totalPrice) AS revenue
+        SELECT COALESCE(SUM(totalPrice), 0.0) AS revenue
         FROM Reservation
         WHERE parkingID = #{parkingID}
         AND statusID = 3
@@ -38,7 +38,7 @@
     </select>
 
     <select id="calculateParkingRevenueDurationTime" resultType="double">
-        SELECT SUM(totalPrice) AS revenue
+        SELECT COALESCE(SUM(totalPrice), 0.0) AS revenue
         FROM Reservation
         WHERE parkingID = #{parkingID}
         AND statusID = 3
