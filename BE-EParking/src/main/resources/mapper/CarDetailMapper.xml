@@ -74,7 +74,7 @@
     </delete>
 
     <select id="findCarsInParkingByStatus" resultMap="responseCarInParkingMap">
-        SELECT U.phoneNumber, cd.licensePlate, rs.statusName, m.methodID, m.methodName,
+        SELECT u.phoneNumber, cd.licensePlate, rs.statusName, m.methodID, m.methodName,
         r.startDateTime, r.endDatetime, r.userID, p.pricing, r.totalPrice
         FROM CarDetail cd
         INNER JOIN Reservation r ON cd.carID = r.carID
