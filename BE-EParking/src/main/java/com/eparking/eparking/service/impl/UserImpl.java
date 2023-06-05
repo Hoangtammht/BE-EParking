@@ -36,9 +36,7 @@ import java.util.List;
 public class UserImpl implements UserDetailsService, UserService {
 
     private final PasswordEncoder passwordEncoder;
-
     private final UserMapper userMapper;
-    
     private final RoleService roleService;
     private final ParkingMapper parkingMapper;
     private final CarDetailMapper carDetailMapper;
