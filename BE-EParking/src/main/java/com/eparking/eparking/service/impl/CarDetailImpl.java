@@ -4,6 +4,8 @@ import com.eparking.eparking.dao.CarDetailMapper;
 import com.eparking.eparking.domain.CarDetail;
 import com.eparking.eparking.domain.response.ResponseCarDetail;
 import com.eparking.eparking.domain.response.ResponseCarInParking;
+import com.eparking.eparking.domain.response.ResponseUser;
+import com.eparking.eparking.domain.response.ResponseUserRegister;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.CarDetailService;
 import com.eparking.eparking.service.interf.UserService;
@@ -62,6 +64,10 @@ public class CarDetailImpl implements CarDetailService {
             Pageable pageable = PageRequest.of(page, size);
             int offset = page * size;
             List<ResponseCarInParking> carsParking = carDetailMapper.findCarsInParkingByStatus(status, size, offset);
+            for (ResponseCarInParking carList: carsParking) {
+                ResponseUserRegister customerInfo = userService.findResponseUserRegisterByUserID(carList.getCustomerID());
+                carList.setCustomerInfo(customerInfo);
+            }
             long totalCount = carDetailMapper.getNumberOfReservationByStatus(status);
             return new PageImpl<>(carsParking, pageable, totalCount);
         } catch (Exception e) {

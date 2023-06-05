@@ -30,6 +30,18 @@
         WHERE User.phoneNumber = #{phoneNumber}
     </select>
 
+    <select id="findResponseUserRegisterByUserID" resultType="com.eparking.eparking.domain.response.ResponseUserRegister">
+        SELECT
+        userID,
+        User.phoneNumber,
+        fullName,
+        email,
+        identifyCard,
+        balance
+        FROM User
+        WHERE User.userID = #{userID}
+    </select>
+
     <update id="updateUserByUserID" parameterType = "com.eparking.eparking.domain.resquest.UpdateUser" >
         UPDATE User
         SET
