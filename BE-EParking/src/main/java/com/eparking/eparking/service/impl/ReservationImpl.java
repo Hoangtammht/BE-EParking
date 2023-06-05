@@ -56,6 +56,7 @@ public class ReservationImpl implements ReservationService {
     @Transactional
     public ResponseReservation createReservation(RequestReservation requestReservation) {
         try {
+            System.out.println(requestReservation.toString());
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
                 reservationMapper.createReservation(requestReservation, userID);
