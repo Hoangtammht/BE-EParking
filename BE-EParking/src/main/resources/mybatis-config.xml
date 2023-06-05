@@ -24,5 +24,8 @@
     <mapper resource="mapper/CartMapper.xml"></mapper>
 
     <mapper resource="mapper/ReservationMapper.xml"></mapper>
+
+    <mapper resource="mapper/RevenueMapper.xml"></mapper>
+
 </mappers>
 </configuration>
