@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -57,19 +59,32 @@ public class ReservationController {
         try {
             ResponseParking responseParking = parkingMapper.findParkingByParkingID(requestReservation.getParkingID());
             if(responseParking.getPark() == 0){
-                return ResponseEntity.ok("This parking lot is full!");
+                Map<String, Object> jsonResponse = new HashMap<>();
+                jsonResponse.put("status", "error");
+                jsonResponse.put("message", "Insufficient lot");
+                jsonResponse.put("data", null);
+                return ResponseEntity.ok(jsonResponse);
             }
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User user = userService.findUserByPhoneNumber(authentication.getName());
             if(user.getBalance() - requestReservation.getTotalPrice() < 0){
-                return ResponseEntity.ok("Not enough money to reserve a place at this parking lot !");
+                Map<String, Object> jsonResponse = new HashMap<>();
+                jsonResponse.put("status", "error");
+                jsonResponse.put("message", "Insufficient money");
+                jsonResponse.put("data", null);
+                return ResponseEntity.ok(jsonResponse);
             }
             ResponseReservation createReservations = reservationService.createReservation(requestReservation);
             userMapper.updateWalletForUser(user.getUserID(),user.getBalance() - requestReservation.getTotalPrice());
             User userSup = userMapper.findUserByUserID(responseParking.getUserID());
             userMapper.updateWalletForUser(userSup.getUserID(), userSup.getBalance() + requestReservation.getTotalPrice());
             parkingMapper.updateParkForParking(requestReservation.getParkingID(),responseParking.getPark() - 1);
-            return ResponseEntity.ok(createReservations);
+
+            Map<String, Object> jsonResponse = new HashMap<>();
+            jsonResponse.put("status", "success");
+            jsonResponse.put("message", "Reservation successful");
+            jsonResponse.put("data", createReservations);
+            return ResponseEntity.ok(jsonResponse);
         } catch (ApiRequestException e) {
             throw e;
         }
