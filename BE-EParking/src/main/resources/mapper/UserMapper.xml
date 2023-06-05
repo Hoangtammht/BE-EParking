@@ -50,4 +50,15 @@
         SET balance = #{balance}
         WHERE userID = #{userID}
     </update>
+    <select id="findUserByUserID" parameterType="java.lang.Integer" resultType="com.eparking.eparking.domain.User">
+        SELECT
+            userID,
+            phoneNumber,
+            fullName,
+            email,
+            identifyCard,
+            balance
+        FROM User
+        WHERE userID = #{userID}
+    </select>
 </mapper>

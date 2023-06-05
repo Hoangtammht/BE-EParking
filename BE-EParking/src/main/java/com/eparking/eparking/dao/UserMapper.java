@@ -17,4 +17,5 @@ public interface UserMapper {
     void updateUserByUserID(UpdateUser updateUser, int userID);
     void updateWalletForUser(int userID,Double balance);
     void createSupplier(RequestCreateUser user);
+    User findUserByUserID (int userID);
 }

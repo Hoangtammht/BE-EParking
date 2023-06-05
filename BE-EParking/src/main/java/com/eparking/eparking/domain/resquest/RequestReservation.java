@@ -15,7 +15,7 @@ public class RequestReservation {
     private int parkingID;
     private Instant startDateTime;
     private Instant endDatetime;
-    private int totalPrice;
+    private double totalPrice;
     private int statusID;
     private int carID;
 
