@@ -41,6 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/parking/getListParking",
                 "/parking/searchNearbyParking",
                 "/reservation/createReservation",
+                "/ws/*",
+                "/app/*",
                 "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**"
         ).permitAll();
         http.authorizeRequests().antMatchers(PUT, "/user/updateUser").hasAnyAuthority("ROLE_SUPPLIER", "ROLE_CUSTOMER");
