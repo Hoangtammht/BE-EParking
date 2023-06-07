@@ -27,20 +27,20 @@ import static com.eparking.eparking.paymenConfig.VNpayConfig.vnp_Version;
 @Slf4j
 public class PaymentService {
     private final UserService userService;
-    public ResponseEntity<?> createPayment(Payment payment) throws UnsupportedEncodingException {
+    public ResponseEntity<?> createPayment(HttpServletRequest req, Payment payment) throws UnsupportedEncodingException {
         try {
-            String orderType = payment.getOrdertypeParam();
-            long amount = payment.getAmountParam() * 100;
-            String bankCode = payment.getBankCodeParam();
+            String vnp_Version = "2.1.0";
+            String vnp_Command = "pay";
+            long amount =  Integer.parseInt(payment.getAmountParam()) * 100;
+            String bankCode = "VNBANK";
 
             String vnp_TxnRef = VNpayConfig.getRandomNumber(8);
-            String vnp_IpAddr = payment.getVnp_IpAddr();
+            String vnp_IpAddr = VNpayConfig.getIpAddress(req);
             String vnp_TmnCode = VNpayConfig.vnp_TmnCode;
 
             Map<String, String> vnp_Params = new HashMap<>();
-//            vnp_Params.put("vnp_IpnURL",VNpayConfig.vnp_IpnURL);
             vnp_Params.put("vnp_Version", vnp_Version);
-            vnp_Params.put("vnp_Command", VNpayConfig.vnp_Command);
+            vnp_Params.put("vnp_Command", vnp_Command);
             vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
             vnp_Params.put("vnp_Amount", String.valueOf(amount));
             vnp_Params.put("vnp_CurrCode", "VND");
@@ -50,16 +50,12 @@ public class PaymentService {
             }
             vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
             vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
-            vnp_Params.put("vnp_OrderType", orderType);
+            vnp_Params.put("vnp_OrderType", "other");
 
-            String locate = payment.getLocate();
-            if (locate != null && !locate.isEmpty()) {
-                vnp_Params.put("vnp_Locale", locate);
-            } else {
-                vnp_Params.put("vnp_Locale", "VN");
-            }
+            vnp_Params.put("vnp_Locale", "vn");
             vnp_Params.put("vnp_ReturnUrl", VNpayConfig.vnp_Returnurl);
             vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+
 
             Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -97,7 +93,12 @@ public class PaymentService {
             String vnp_SecureHash = VNpayConfig.hmacSHA512(VNpayConfig.vnp_HashSecret, hashData.toString());
             queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
             String paymentUrl = VNpayConfig.vnp_PayUrl + "?" + queryUrl;
-            return ResponseEntity.ok().body(paymentUrl);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("code", "00");
+            response.put("message", "success");
+            response.put("url", paymentUrl);
+            return ResponseEntity.ok().body(response);
         }catch (Exception e){
             throw new ApiRequestException("Fail to create payment action: " + e);
         }
