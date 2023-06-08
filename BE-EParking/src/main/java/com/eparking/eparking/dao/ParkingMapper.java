@@ -20,7 +20,7 @@ public interface ParkingMapper {
     void addSpecialDatesForParking(List<ParkingSpecialDate> parkingSpecialDates);
     List<ParkingDate> showDatesOfParking(int parkingID);
     void createSpecialDate(SpecialDate specialDate);
-    List<ResponseParking> getListParking(int size,long offset);
+    List<ResponseParking> getListParking(int size,long offset,int userID);
     long getNumberOfParkings();
     List<ResponseParking> searchNearbyParking(double latitude, double longitude, double radius, int size, long offset, String sortBy);
 

@@ -89,7 +89,9 @@ public class ParkingImpl implements ParkingService {
         try {
             Pageable pageable = PageRequest.of(page, size);
             long offset = pageable.getOffset();
-            List<ResponseParking> parkingList = parkingMapper.getListParking(size, offset);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
+            List<ResponseParking> parkingList = parkingMapper.getListParking(size, offset,userID);
             long totalCount = parkingMapper.getNumberOfParkings();
             return new PageImpl<>(parkingList, pageable, totalCount);
         } catch (Exception e) {

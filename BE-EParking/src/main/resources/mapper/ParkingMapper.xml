@@ -47,7 +47,8 @@
             park,
             status
         FROM Parking P, Method M, User U
-        WHERE P.methodID = M.methodID
+        WHERE P.userID = #{userID}
+        AND P.methodID = M.methodID
         and U.userID = P.userID
         ORDER BY parkingID
         LIMIT #{size} OFFSET #{offset}
