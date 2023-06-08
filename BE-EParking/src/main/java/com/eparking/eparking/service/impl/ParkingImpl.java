@@ -126,5 +126,15 @@ public class ParkingImpl implements ParkingService {
         }
     }
 
+    @Override
+    public ResponseParking updatePricingByParkingID(int parkingID, int pricing) {
+        try{
+            parkingMapper.updatePricingByParkingID(parkingID,pricing);
+            return parkingMapper.findParkingByParkingID(parkingID);
+        }catch (Exception e){
+            throw new ApiRequestException("Fail to update pricing by parkingID");
+        }
+    }
+
 
 }

@@ -25,4 +25,5 @@ public interface ParkingService {
     Page<ResponseParking> getListParking(int page, int size);
 
     Page<ResponseParking> searchNearbyParking(double latitude, double longitude, int page, int size, String sortBy, double radius);
+    ResponseParking updatePricingByParkingID(int parkingID,int pricing);
 }
