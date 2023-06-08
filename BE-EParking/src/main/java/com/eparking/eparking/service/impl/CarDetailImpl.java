@@ -1,11 +1,9 @@
 package com.eparking.eparking.service.impl;
 
 import com.eparking.eparking.dao.CarDetailMapper;
+import com.eparking.eparking.dao.ParkingMapper;
 import com.eparking.eparking.domain.CarDetail;
-import com.eparking.eparking.domain.response.ResponseCarDetail;
-import com.eparking.eparking.domain.response.ResponseCarInParking;
-import com.eparking.eparking.domain.response.ResponseUser;
-import com.eparking.eparking.domain.response.ResponseUserRegister;
+import com.eparking.eparking.domain.response.*;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.CarDetailService;
 import com.eparking.eparking.service.interf.UserService;
@@ -20,7 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,7 +28,7 @@ public class CarDetailImpl implements CarDetailService {
 
     private final CarDetailMapper carDetailMapper;
     private final UserService userService;
-
+    private final ParkingMapper parkingMapper;
     @Override
     @Transactional
     public ResponseCarDetail addCar(String licensePlate) {
@@ -63,17 +61,25 @@ public class CarDetailImpl implements CarDetailService {
         try {
             Pageable pageable = PageRequest.of(page, size);
             int offset = page * size;
-            List<ResponseCarInParking> carsParking = carDetailMapper.findCarsInParkingByStatus(status, size, offset);
-            for (ResponseCarInParking carList: carsParking) {
-                ResponseUserRegister customerInfo = userService.findResponseUserRegisterByUserID(carList.getCustomerID());
-                carList.setCustomerInfo(customerInfo);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
+            List<ResponseParking> listParkingOfUser = parkingMapper.getListParkingByUserID(userID);
+            List<ResponseCarInParking> carsParking = new ArrayList<>();
+            for (ResponseParking parking : listParkingOfUser) {
+                List<ResponseCarInParking> carsInParking = carDetailMapper.findCarsInParkingByStatus(parking.getParkingID(), status, size, offset);
+                for (ResponseCarInParking car : carsInParking) {
+                    ResponseUserRegister customerInfo = userService.findResponseUserRegisterByUserID(car.getCustomerID());
+                    car.setCustomerInfo(customerInfo);
+                }
+                carsParking.addAll(carsInParking);
             }
             long totalCount = carDetailMapper.getNumberOfReservationByStatus(status);
             return new PageImpl<>(carsParking, pageable, totalCount);
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to find the list cars by revenue status of Supplier");
+            throw new ApiRequestException("Failed to find the list of cars by revenue status of the supplier");
         }
     }
+
 
     @Override
     public List<ResponseCarDetail> findCarDetailByUserID() {
