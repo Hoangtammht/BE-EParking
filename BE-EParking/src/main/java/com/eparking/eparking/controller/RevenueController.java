@@ -57,7 +57,7 @@ public class RevenueController {
         }
     }
 
-    @GetMapping("/revenue/allParking/cal")
+    @GetMapping("/allParking/cal")
     public ResponseEntity<ResponseRevenueAllParkingDuration> getRevenueAllParkingByDurationTime(
             @RequestParam Instant from,
             @RequestParam Instant to,
