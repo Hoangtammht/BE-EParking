@@ -144,5 +144,10 @@
         SET park = #{park}
         WHERE parkingID = #{parkingID}
     </update>
+    <update id="updatePricingByParkingID" parameterType="com.eparking.eparking.domain.Parking">
+        UPDATE Parking
+        SET pricing = #{pricing}
+        WHERE parkingID = #{parkingID}
+    </update>
 
 </mapper>

@@ -1,6 +1,7 @@
 package com.eparking.eparking.controller;
 
 import com.eparking.eparking.domain.*;
+import com.eparking.eparking.domain.response.RequestUpdatePricing;
 import com.eparking.eparking.domain.response.ResponseParking;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ParkingService;
@@ -116,6 +117,12 @@ public class ParkingController {
             throw e;
         }
     }
-
-
+    @PutMapping("/updatePricing")
+    public ResponseEntity<ResponseParking> updatePricing(@RequestBody RequestUpdatePricing requestUpdatePricing){
+        try{
+            return ResponseEntity.ok(parkingService.updatePricingByParkingID(requestUpdatePricing.getParkingID(), requestUpdatePricing.getPricing()));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
 }
