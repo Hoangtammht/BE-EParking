@@ -12,7 +12,7 @@ public interface CarDetailMapper {
     List<ResponseCarDetail> findCarDetailByUserID(int userID);
     void addCar(CarDetail carDetail);
     void removeCar(int carID);
-    List<ResponseCarInParking> findCarsInParkingByStatus(int status, int size, int offset);
+    List<ResponseCarInParking> findCarsInParkingByStatus(int parkingID, int status, int size, int offset);
     long getNumberOfReservationByStatus(int status);
     ResponseCarDetail getNewlyCar();
     ResponseCarDetail findCarDetailByCarID(int carID);

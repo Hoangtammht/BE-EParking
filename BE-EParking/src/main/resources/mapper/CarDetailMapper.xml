@@ -82,7 +82,7 @@
         INNER JOIN Parking p ON r.parkingID = p.parkingID
         INNER JOIN Method m ON m.methodID = p.methodID
         INNER JOIN User u ON u.userID = cd.userID
-        WHERE rs.statusID = #{status}
+        WHERE rs.statusID = #{status} and p.parkingID = #{parkingID}
         LIMIT #{size} OFFSET #{offset}
     </select>
 
