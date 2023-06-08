@@ -106,12 +106,12 @@ public class ParkingController {
 
     @GetMapping("/searchNearbyParking")
     public ResponseEntity<Page<ResponseParking>> searchNearbyParking(
-            @RequestParam double latitude, @RequestParam double longitude, @RequestParam int page, @RequestParam int size, @RequestParam String sortBy, @RequestParam double radius,
+            @RequestParam double latitude, @RequestParam double longitude, @RequestParam int page, @RequestParam int size, @RequestParam(required = false, defaultValue = "nearest") String sortBy, @RequestParam double radius,
             HttpServletResponse response,
             HttpServletRequest request
     ) {
         try {
-            Page<ResponseParking> listParking = parkingService.searchNearbyParking(latitude, longitude, page, size, sortBy, radius);
+            Page<ResponseParking> listParking = parkingService.searchNearbyParking(latitude, longitude, page - 1, size, sortBy, radius);
             return ResponseEntity.ok(listParking);
         } catch (ApiRequestException e) {
             throw e;
