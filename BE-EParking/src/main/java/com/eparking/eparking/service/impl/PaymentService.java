@@ -31,7 +31,7 @@ public class PaymentService {
         try {
             String orderType = payment.getOrdertypeParam();
             long amount = payment.getAmountParam() * 100;
-            String bankCode = payment.getBankCodeParam();
+            String bankCode = null;
 
             String vnp_TxnRef = VNpayConfig.getRandomNumber(8);
             String vnp_IpAddr = payment.getVnp_IpAddr();
