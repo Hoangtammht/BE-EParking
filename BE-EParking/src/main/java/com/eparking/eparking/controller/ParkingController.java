@@ -3,6 +3,7 @@ package com.eparking.eparking.controller;
 import com.eparking.eparking.domain.*;
 import com.eparking.eparking.domain.response.RequestUpdatePricing;
 import com.eparking.eparking.domain.response.ResponseParking;
+import com.eparking.eparking.domain.resquest.RequestUpdateSlot;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ParkingService;
 import lombok.RequiredArgsConstructor;
@@ -121,6 +122,15 @@ public class ParkingController {
     public ResponseEntity<ResponseParking> updatePricing(@RequestBody RequestUpdatePricing requestUpdatePricing){
         try{
             return ResponseEntity.ok(parkingService.updatePricingByParkingID(requestUpdatePricing.getParkingID(), requestUpdatePricing.getPricing()));
+        }catch (ApiRequestException e){
+            throw e;
+        }
+    }
+
+    @PutMapping("/updateSlotOfParking")
+    public ResponseEntity<ResponseParking> updateSlotOfParking(@RequestBody RequestUpdateSlot requestUpdateSlot){
+        try{
+            return ResponseEntity.ok(parkingService.updateSlotByParkingID(requestUpdateSlot.getParkingID(), requestUpdateSlot.getPark()));
         }catch (ApiRequestException e){
             throw e;
         }

@@ -27,4 +27,5 @@ public interface ParkingMapper {
     List<ResponseParking> getListParkingByUserID(int userID);
     void updateParkForParking(int parkingID,int park);
     void updatePricingByParkingID(int parkingID,int pricing);
+
 }
