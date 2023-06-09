@@ -129,14 +129,24 @@ public class ParkingImpl implements ParkingService {
     }
 
     @Override
+    @Transactional
     public ResponseParking updatePricingByParkingID(int parkingID, int pricing) {
         try{
-            parkingMapper.updatePricingByParkingID(parkingID,pricing);
+            parkingMapper.updatePricingByParkingID(parkingID, pricing);
             return parkingMapper.findParkingByParkingID(parkingID);
         }catch (Exception e){
             throw new ApiRequestException("Fail to update pricing by parkingID");
         }
     }
 
-
+    @Override
+    @Transactional
+    public ResponseParking updateSlotByParkingID(int parkingID, int park) {
+        try{
+            parkingMapper.updateParkForParking(parkingID, park);
+            return parkingMapper.findParkingByParkingID(parkingID);
+        }catch (Exception e){
+            throw new ApiRequestException("Fail to update slot by parkingID");
+        }
+    }
 }

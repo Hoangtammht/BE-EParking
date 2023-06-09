@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/revenue/allParking/today").hasAnyAuthority("ROLE_SUPPLIER");
         http.authorizeRequests().antMatchers(GET, "/revenue/parking/cal").hasAnyAuthority("ROLE_SUPPLIER");
         http.authorizeRequests().antMatchers(GET, "/revenue/allParking/cal").hasAnyAuthority("ROLE_SUPPLIER");
-        http.authorizeRequests().antMatchers(GET, "/parking/updatePricing").hasAnyAuthority("ROLE_SUPPLIER");
+        http.authorizeRequests().antMatchers(PUT, "/parking/updatePricing").hasAnyAuthority("ROLE_SUPPLIER");
         http.authorizeRequests().antMatchers(POST, "/car/addCar").hasAnyAuthority("ROLE_CUSTOMER");
         http.authorizeRequests().antMatchers(DELETE, "/car/removeCar").hasAnyAuthority("ROLE_CUSTOMER");
         http.authorizeRequests().antMatchers(GET, "/car/showCarsInParkingByStatus").hasAnyAuthority("ROLE_SUPPLIER");
@@ -67,6 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/parking/getListParking").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_SUPPLIER");
         http.authorizeRequests().antMatchers(GET, "/parking/searchNearbyParking").hasAnyAuthority("ROLE_CUSTOMER");
         http.authorizeRequests().antMatchers(POST, "/reservation/createReservation").hasAnyAuthority("ROLE_CUSTOMER");
+        http.authorizeRequests().antMatchers(PUT, "/parking/updateSlotOfParking").hasAnyAuthority("ROLE_SUPPLIER");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
