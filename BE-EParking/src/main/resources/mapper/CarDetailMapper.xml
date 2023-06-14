@@ -83,6 +83,7 @@
         INNER JOIN Method m ON m.methodID = p.methodID
         INNER JOIN User u ON u.userID = cd.userID
         WHERE rs.statusID = #{status} and p.parkingID = #{parkingID}
+        ORDER BY r.reserveID DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 

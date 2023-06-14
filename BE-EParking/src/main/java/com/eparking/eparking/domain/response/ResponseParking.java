@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseParking {
+public class ResponseParking implements Serializable {
     private int parkingID;
     private int userID;
     private String phoneNumber;

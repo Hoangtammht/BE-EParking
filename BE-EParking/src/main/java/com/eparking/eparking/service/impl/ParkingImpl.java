@@ -11,6 +11,10 @@ import com.eparking.eparking.service.interf.ParkingService;
 import com.eparking.eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
@@ -31,6 +35,8 @@ public class ParkingImpl implements ParkingService {
 
     private final UserService userService;
 
+    private final CacheManager cacheManager;
+
     @Override
     @Transactional
     public ResponseParking createParking(Parking parking) {
@@ -38,6 +44,7 @@ public class ParkingImpl implements ParkingService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
             parkingMapper.createParking(parking, userID);
+            clearNearbyParkingCache();
             return parkingMapper.findParkingByParkingID(parking.getParkingID());
         } catch (Exception e) {
             throw new ApiRequestException("Failed to create parking: " + e);
@@ -100,6 +107,7 @@ public class ParkingImpl implements ParkingService {
     }
 
     @Override
+    @Cacheable(cacheNames = "Parking", key = "T(java.lang.String).valueOf(#latitude).concat(':').concat(T(java.lang.String).valueOf(#longitude)).concat(':').concat(#page).concat(':').concat(#size).concat(':').concat(#sortBy).concat(':').concat(#radius)")
     public Page<ResponseParking> searchNearbyParking(double latitude, double longitude, int page, int size, String sortBy, double radius) {
         try {
             Sort sort = null;
@@ -124,29 +132,39 @@ public class ParkingImpl implements ParkingService {
             long totalCount = parkingMapper.getNumberOfParkings();
             return new PageImpl<>(parkingList, pageable, totalCount);
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to get list Parking Nearly: " + e);
+            throw new ApiRequestException("Failed to get list Parking Nearby: " + e);
         }
     }
 
+
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "Parking", key = "#parkingID")
     public ResponseParking updatePricingByParkingID(int parkingID, int pricing) {
-        try{
+        try {
+            clearNearbyParkingCache();
             parkingMapper.updatePricingByParkingID(parkingID, pricing);
             return parkingMapper.findParkingByParkingID(parkingID);
-        }catch (Exception e){
-            throw new ApiRequestException("Fail to update pricing by parkingID");
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to update pricing by parkingID: " + e);
         }
     }
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "Parking", key = "#parkingID")
     public ResponseParking updateSlotByParkingID(int parkingID, int park) {
-        try{
+        try {
+            clearNearbyParkingCache();
             parkingMapper.updateParkForParking(parkingID, park);
             return parkingMapper.findParkingByParkingID(parkingID);
-        }catch (Exception e){
-            throw new ApiRequestException("Fail to update slot by parkingID");
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to update slot by parkingID: " + e);
         }
+    }
+
+    private void clearNearbyParkingCache() {
+        Cache parkingCache = cacheManager.getCache("Parking");
+        parkingCache.clear();
     }
 }
