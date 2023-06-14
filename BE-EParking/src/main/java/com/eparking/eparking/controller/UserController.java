@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.eparking.eparking.dao.CarDetailMapper;
 import com.eparking.eparking.dao.ParkingMapper;
 import com.eparking.eparking.dao.RoleMapper;
-import com.eparking.eparking.domain.CarDetail;
 import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
