@@ -65,7 +65,6 @@ public class PaymentService {
             Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
             String vnp_CreateDate = formatter.format(cld.getTime());
-            System.out.println("Current time in Asia/Ho_Chi_Minh: " + vnp_CreateDate);
 
             vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
