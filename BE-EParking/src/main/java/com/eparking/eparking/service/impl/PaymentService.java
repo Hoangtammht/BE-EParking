@@ -1,12 +1,16 @@
 package com.eparking.eparking.service.impl;
 
+import com.eparking.eparking.dao.PaymentMapper;
 import com.eparking.eparking.dao.UserMapper;
+import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.resquest.Payment;
+import com.eparking.eparking.domain.resquest.TransactionData;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.paymenConfig.VNpayConfig;
 import com.eparking.eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +31,11 @@ import static com.eparking.eparking.paymenConfig.VNpayConfig.vnp_Version;
 @Slf4j
 public class PaymentService {
     private final UserService userService;
+
+    private final PaymentMapper paymentMapper;
+
+    private final UserMapper userMapper;
+
     public ResponseEntity<?> createPayment(HttpServletRequest req, Payment payment) throws UnsupportedEncodingException {
         try {
             String vnp_Version = "2.1.0";
@@ -148,4 +157,19 @@ public class PaymentService {
                 return ResponseEntity.ok("{\"RspCode\":\"99\",\"Message\":\"Unknown error\"}");
             }
         }
+
+    public ResponseEntity<?> insertTransaction(TransactionData transactionData) {
+        try {
+            paymentMapper.insertTransaction(transactionData);
+            User user = userMapper.findUserByUserID(transactionData.getUserID());
+            double userWallet = user.getBalance() + Double.parseDouble(transactionData.getVnp_Amount()) / 100;
+            userMapper.updateWalletForUser(transactionData.getUserID(), userWallet);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to insert transaction: " + e.getMessage());
+        }
+    }
+
+
 }

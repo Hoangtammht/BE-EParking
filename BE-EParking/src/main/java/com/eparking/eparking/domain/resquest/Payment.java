@@ -14,7 +14,4 @@ public class Payment {
     @ApiModelProperty(example= "100000")
     private String amountParam;
 
-    public void User() {
-        this.amountParam = "10000";
-    }
 }

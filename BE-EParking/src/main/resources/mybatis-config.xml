@@ -27,5 +27,7 @@
 
     <mapper resource="mapper/RevenueMapper.xml"></mapper>
 
+    <mapper resource="mapper/PaymentMapper.xml"></mapper>
+
 </mappers>
 </configuration>
