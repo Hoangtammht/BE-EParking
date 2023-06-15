@@ -162,7 +162,7 @@ public class PaymentService {
         try {
             paymentMapper.insertTransaction(transactionData);
             User user = userMapper.findUserByUserID(transactionData.getUserID());
-            double userWallet = user.getBalance() + Double.parseDouble(transactionData.getVnp_Amount()) / 100;
+            double userWallet = user.getBalance() + transactionData.getVnp_Amount();
             userMapper.updateWalletForUser(transactionData.getUserID(), userWallet);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

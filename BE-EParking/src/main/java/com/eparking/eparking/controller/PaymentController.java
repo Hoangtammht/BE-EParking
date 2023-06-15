@@ -71,7 +71,7 @@ public class PaymentController {
                     LocalDateTime paymentDateTime = LocalDateTime.parse(request.getParameter("vnp_PayDate"), formatter);
                     transactionData.setUserID(Integer.parseInt(request.getParameter("vnp_OrderInfo")));
                     transactionData.setBankCode(request.getParameter("vnp_BankCode"));
-                    transactionData.setVnp_Amount(request.getParameter("vnp_Amount"));
+                    transactionData.setVnp_Amount(Double.parseDouble(request.getParameter("vnp_Amount")) / 100);
                     transactionData.setVnp_TxnRef(request.getParameter("vnp_TxnRef"));
                     transactionData.setPaymentDateTime(paymentDateTime);
                     paymentService.insertTransaction(transactionData);

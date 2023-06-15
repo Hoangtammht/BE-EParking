@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class TransactionData {
     private int userID;
     private String bankCode;
-    private String vnp_Amount;
+    private double vnp_Amount;
     private String vnp_TxnRef;
     private LocalDateTime paymentDateTime;
 
