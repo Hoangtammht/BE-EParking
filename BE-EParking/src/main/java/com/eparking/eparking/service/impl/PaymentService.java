@@ -45,21 +45,28 @@ public class PaymentService {
             vnp_Params.put("vnp_Amount", String.valueOf(amount));
             vnp_Params.put("vnp_CurrCode", "VND");
 
-            if (bankCode != null && !bankCode.isEmpty()) {
+            if (payment.getBackCode() == null && payment.getBackCode().isEmpty()) {
                 vnp_Params.put("vnp_BankCode", bankCode);
+            }else{
+                vnp_Params.put("vnp_BankCode", payment.getBackCode());
             }
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
+
             vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-            vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+            vnp_Params.put("vnp_OrderInfo", String.valueOf(userID));
             vnp_Params.put("vnp_OrderType", "other");
 
             vnp_Params.put("vnp_Locale", "vn");
             vnp_Params.put("vnp_ReturnUrl", VNpayConfig.vnp_Returnurl);
             vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
-
-            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
             String vnp_CreateDate = formatter.format(cld.getTime());
+            System.out.println("Current time in Asia/Ho_Chi_Minh: " + vnp_CreateDate);
+
             vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
             cld.add(Calendar.MINUTE, 15);

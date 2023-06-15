@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Payment {
+    @ApiModelProperty(example= "VNBANK")
+    private String backCode;
     @ApiModelProperty(example= "100000")
     private String amountParam;
 
