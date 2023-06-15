@@ -62,7 +62,12 @@ public class PaymentService {
             vnp_Params.put("vnp_ReturnUrl", VNpayConfig.vnp_Returnurl);
             vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
-            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+            Calendar cld = Calendar.getInstance(); // Get the current time in the server's time zone
+
+            // Apply the 7-hour delay
+            cld.add(Calendar.HOUR_OF_DAY, 7);
+
+            cld.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
             String vnp_CreateDate = formatter.format(cld.getTime());
 
