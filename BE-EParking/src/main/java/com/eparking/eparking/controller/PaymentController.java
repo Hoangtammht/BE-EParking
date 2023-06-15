@@ -1,12 +1,14 @@
 package com.eparking.eparking.controller;
 
 import com.eparking.eparking.domain.resquest.Payment;
+import com.eparking.eparking.domain.resquest.TransactionData;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.paymenConfig.VNpayConfig;
 import com.eparking.eparking.service.impl.PaymentService;
 import com.eparking.eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.eparking.eparking.paymenConfig.VNpayConfig.vnp_Version;
@@ -57,17 +62,29 @@ public class PaymentController {
         }
         String signValue = VNpayConfig.hashAllFields(fields);
 
+        TransactionData transactionData = new TransactionData();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
         if (signValue.equals(request.getParameter("vnp_SecureHash"))) {
             if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
+                try {
+                    LocalDateTime paymentDateTime = LocalDateTime.parse(request.getParameter("vnp_PayDate"), formatter);
+                    transactionData.setUserID(Integer.parseInt(request.getParameter("vnp_OrderInfo")));
+                    transactionData.setBankCode(request.getParameter("vnp_BankCode"));
+                    transactionData.setVnp_Amount(request.getParameter("vnp_Amount"));
+                    transactionData.setVnp_TxnRef(request.getParameter("vnp_TxnRef"));
+                    transactionData.setPaymentDateTime(paymentDateTime);
+                    paymentService.insertTransaction(transactionData);
+                }catch (ApiRequestException e){
+                    return ResponseEntity.ok("Payment handled failed");
+                }
                 return ResponseEntity.ok("Payment handled successfully");
             } else {
                 return ResponseEntity.ok("Payment handled failed");
             }
-
         } else {
             return ResponseEntity.ok("Payment handled failed 0");
         }
-
 
     }
 
@@ -89,4 +106,5 @@ public class PaymentController {
             throw e;
         }
     }
+
 }

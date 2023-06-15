@@ -1,12 +1,16 @@
 package com.eparking.eparking.service.impl;
 
+import com.eparking.eparking.dao.PaymentMapper;
 import com.eparking.eparking.dao.UserMapper;
+import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.resquest.Payment;
+import com.eparking.eparking.domain.resquest.TransactionData;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.paymenConfig.VNpayConfig;
 import com.eparking.eparking.service.interf.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +31,11 @@ import static com.eparking.eparking.paymenConfig.VNpayConfig.vnp_Version;
 @Slf4j
 public class PaymentService {
     private final UserService userService;
+
+    private final PaymentMapper paymentMapper;
+
+    private final UserMapper userMapper;
+
     public ResponseEntity<?> createPayment(HttpServletRequest req, Payment payment) throws UnsupportedEncodingException {
         try {
             String vnp_Version = "2.1.0";
@@ -45,21 +54,27 @@ public class PaymentService {
             vnp_Params.put("vnp_Amount", String.valueOf(amount));
             vnp_Params.put("vnp_CurrCode", "VND");
 
-            if (bankCode != null && !bankCode.isEmpty()) {
+            if (payment.getBackCode() == null && payment.getBackCode().isEmpty()) {
                 vnp_Params.put("vnp_BankCode", bankCode);
+            }else{
+                vnp_Params.put("vnp_BankCode", payment.getBackCode());
             }
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
+
             vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-            vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+            vnp_Params.put("vnp_OrderInfo", String.valueOf(userID));
             vnp_Params.put("vnp_OrderType", "other");
 
             vnp_Params.put("vnp_Locale", "vn");
             vnp_Params.put("vnp_ReturnUrl", VNpayConfig.vnp_Returnurl);
             vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
-
-            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
             String vnp_CreateDate = formatter.format(cld.getTime());
+
             vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
             cld.add(Calendar.MINUTE, 15);
@@ -142,4 +157,19 @@ public class PaymentService {
                 return ResponseEntity.ok("{\"RspCode\":\"99\",\"Message\":\"Unknown error\"}");
             }
         }
+
+    public ResponseEntity<?> insertTransaction(TransactionData transactionData) {
+        try {
+            paymentMapper.insertTransaction(transactionData);
+            User user = userMapper.findUserByUserID(transactionData.getUserID());
+            double userWallet = user.getBalance() + Double.parseDouble(transactionData.getVnp_Amount()) / 100;
+            userMapper.updateWalletForUser(transactionData.getUserID(), userWallet);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to insert transaction: " + e.getMessage());
+        }
+    }
+
+
 }
