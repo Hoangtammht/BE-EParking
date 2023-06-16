@@ -15,5 +15,5 @@ public class User {
     private String email;
     private String identifyCard;
     private double balance;
-
+    private int userstatus;
 }

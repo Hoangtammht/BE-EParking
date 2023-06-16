@@ -136,7 +136,7 @@ public class UserImpl implements UserDetailsService, UserService {
                 throw new ApiRequestException("The user is already exists");
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userMapper.createSupplier(user);
+            userMapper.createSupplier(user,1);
             User newUser = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
             for (Integer roleID : user.getUserRoles()) {
                 roleService.insertUserRole(roleID, newUser.getUserID());

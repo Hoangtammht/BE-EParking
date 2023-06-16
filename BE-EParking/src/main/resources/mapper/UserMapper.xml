@@ -25,11 +25,16 @@
             fullName,
             email,
             identifyCard,
-            balance
+            balance,
+            userstatus
         FROM User
         WHERE User.phoneNumber = #{phoneNumber}
     </select>
-
+    <update id="updateStatusUser" parameterType="com.eparking.eparking.domain.User">
+        UPDATE user
+        SET userstatus = #{userstatus}
+        WHERE userID = #{userID}
+    </update>
     <select id="findResponseUserRegisterByUserID" resultType="com.eparking.eparking.domain.response.ResponseUserRegister">
         SELECT
         userID,
@@ -37,7 +42,7 @@
         fullName,
         email,
         identifyCard,
-        balance
+        balance,
         FROM User
         WHERE User.userID = #{userID}
     </select>
@@ -52,12 +57,12 @@
         WHERE userID = #{userID};
     </update>
 
-    <insert id="createSupplier" parameterType="com.eparking.eparking.domain.User" >
-        Insert into User (phoneNumber, password, fullName,identifyCard,balance)
-        values (#{phoneNumber},#{password},#{fullName},#{identifyCard},#{balance})
+    <insert id="createSupplier" parameterType="com.eparking.eparking.domain.resquest.RequestCreateUser" >
+        Insert into User (phoneNumber, password, fullName,identifyCard,balance,userstatus)
+        values (#{user.phoneNumber},#{user.password},#{user.fullName},#{user.identifyCard},#{user.balance},#{userstatus})
     </insert>
 
-    <update id="updateWalletForUser" parameterType="com.eparking.eparking.domain.User" >
+    <update id="updateWalletForUser" parameterType="com.eparking.eparking.domain.User">
         UPDATE User
         SET balance = #{balance}
         WHERE userID = #{userID}
