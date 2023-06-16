@@ -13,7 +13,8 @@
             fullName,
             email,
             identifyCard,
-            balance
+            balance,
+            userstatus
         FROM User
         where phoneNumber = #{phoneNumber};
     </select>
