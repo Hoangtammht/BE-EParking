@@ -32,7 +32,7 @@
         WHERE User.phoneNumber = #{phoneNumber}
     </select>
     <update id="updateStatusUser" parameterType="com.eparking.eparking.domain.User">
-        UPDATE user
+        UPDATE User
         SET userstatus = #{userstatus}
         WHERE userID = #{userID}
     </update>
