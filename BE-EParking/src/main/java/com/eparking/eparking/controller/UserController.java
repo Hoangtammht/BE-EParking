@@ -5,14 +5,14 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.eparking.eparking.dao.CarDetailMapper;
 import com.eparking.eparking.dao.ParkingMapper;
 import com.eparking.eparking.dao.RoleMapper;
+import com.eparking.eparking.dao.UserMapper;
 import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.*;
-import com.eparking.eparking.domain.resquest.LoginUser;
-import com.eparking.eparking.domain.resquest.RequestCreateUser;
-import com.eparking.eparking.domain.resquest.UpdateUser;
+import com.eparking.eparking.domain.resquest.*;
 import com.eparking.eparking.exception.ApiRequestException;
+import com.eparking.eparking.service.impl.ESMService;
 import com.eparking.eparking.service.interf.RoleService;
 import com.eparking.eparking.service.interf.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,13 +38,13 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
-
     private final RoleService roleService;
-
     private final AuthenticationManager authenticationManager;
     private final RoleMapper roleMapper;
     private final CarDetailMapper carDetailMapper;
     private final ParkingMapper parkingMapper;
+    private final ESMService esmService;
+    private final UserMapper userMapper;
     @Value("${SECRET_KEY}")
     private String secret;
 
@@ -59,29 +59,34 @@ public class UserController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String name = authentication.getName();
             User user = userService.findUserByPhoneNumber(name);
-            List<UserRole> userRole = roleService.findRoleByPhoneNumber(user.getPhoneNumber());
-            List<Role> userRoleRe = roleMapper.findRoleForUser(user.getUserID());
-            List<String> roleNames = new ArrayList<>();
-            for (UserRole role : userRole) {
-                roleNames.add(role.getRoleName());
-            }
-            String access_token = JWT.create()
-                    .withSubject(user.getPhoneNumber())
+            if(user.getUserstatus() == 2) {
+                List<UserRole> userRole = roleService.findRoleByPhoneNumber(user.getPhoneNumber());
+                List<Role> userRoleRe = roleMapper.findRoleForUser(user.getUserID());
+                List<String> roleNames = new ArrayList<>();
+                for (UserRole role : userRole) {
+                    roleNames.add(role.getRoleName());
+                }
+                String access_token = JWT.create()
+                        .withSubject(user.getPhoneNumber())
 //                    .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
-                    .withIssuer(request.getRequestURL().toString())
-                    .withClaim("roles", roleNames)
-                    .sign(algorithm);
-            ResponseUser responseUser = userService.findResponseUserByPhone(user.getPhoneNumber());
-            responseUser.setRoleName(userRoleRe);
-            List<ResponseCarDetail> carDetailList = carDetailMapper.findCarDetailByUserID(user.getUserID());
-            List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
-            responseUser.setCarList(carDetailList);
-            responseUser.setParkingList(parkingList);
-            Map<String, Object> tokens = new HashMap<>();
-            tokens.put("access_token", access_token);
-            tokens.put("User", responseUser);
-            response.setContentType("application/json");
-            new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+                        .withIssuer(request.getRequestURL().toString())
+                        .withClaim("roles", roleNames)
+                        .sign(algorithm);
+                ResponseUser responseUser = userService.findResponseUserByPhone(user.getPhoneNumber());
+                responseUser.setRoleName(userRoleRe);
+                List<ResponseCarDetail> carDetailList = carDetailMapper.findCarDetailByUserID(user.getUserID());
+                List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
+                responseUser.setCarList(carDetailList);
+                responseUser.setParkingList(parkingList);
+                Map<String, Object> tokens = new HashMap<>();
+                tokens.put("access_token", access_token);
+                tokens.put("User", responseUser);
+                response.setContentType("application/json");
+                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+            }
+            else {
+                throw new RuntimeException("This user is denied to login");
+            }
         }catch (Exception e){
             response.setHeader("error", e.getMessage());
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -111,9 +116,12 @@ public class UserController {
         try {
             ResponseUser newSupplier = userService.createUser(user);
             ResponseUserRegister responseUserRegister = new ResponseUserRegister(newSupplier.getPhoneNumber(), newSupplier.getFullName(), newSupplier.getIdentifyCard(), newSupplier.getRoleName(),newSupplier.getBalance());
+            esmService.sendOTP(user.getPhoneNumber());
             return ResponseEntity.ok().body(responseUserRegister);
         } catch (ApiRequestException e) {
             throw e;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -134,6 +142,24 @@ public class UserController {
             return ResponseEntity.ok().body(listRole);
         } catch (ApiRequestException e) {
             throw e;
+        }
+    }
+    @PutMapping("updateStatus")
+    public ResponseEntity<?> updateStatusUser(@RequestParam String phoneNumber, @RequestParam String OTP) {
+        try{
+            ResponseCheckOTP responseCheckOTP = esmService.checkOTP(phoneNumber,OTP);
+            if(responseCheckOTP.getCodeResult().equalsIgnoreCase("100")){
+                User user = userService.findUserByPhoneNumber(phoneNumber);
+                userMapper.updateStatusUser(user.getUserID(),2);
+                return ResponseEntity.ok("Successfully");
+            }
+            else {
+                throw new RuntimeException("OTP is invalid");
+            }
+        }catch (ApiRequestException e){
+            throw e;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
