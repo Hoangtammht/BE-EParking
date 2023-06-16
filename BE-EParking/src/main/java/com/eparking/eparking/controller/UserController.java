@@ -151,7 +151,7 @@ public class UserController {
                 return ResponseEntity.ok("Successfully");
             }
             else {
-                throw new RuntimeException("OTP is invalid");
+                return ResponseEntity.ok("OTP code is invalid");
             }
         }catch (ApiRequestException e){
             throw e;
