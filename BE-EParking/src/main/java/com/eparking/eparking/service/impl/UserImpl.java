@@ -7,10 +7,7 @@ import com.eparking.eparking.dao.UserMapper;
 import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
-import com.eparking.eparking.domain.response.ResponseCarDetail;
-import com.eparking.eparking.domain.response.ResponseParking;
-import com.eparking.eparking.domain.response.ResponseUser;
-import com.eparking.eparking.domain.response.ResponseUserRegister;
+import com.eparking.eparking.domain.response.*;
 import com.eparking.eparking.domain.resquest.RequestCreateUser;
 import com.eparking.eparking.domain.resquest.UpdateUser;
 import com.eparking.eparking.exception.ApiRequestException;
@@ -42,6 +39,7 @@ public class UserImpl implements UserDetailsService, UserService {
     private final ParkingMapper parkingMapper;
     private final CarDetailMapper carDetailMapper;
     private final RoleMapper roleMapper;
+    private final ESMService esmService;
 
 
     @Override
@@ -137,6 +135,10 @@ public class UserImpl implements UserDetailsService, UserService {
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userMapper.createSupplier(user,1);
+            ResponseSendOTP responseSendOTP = esmService.sendOTP(user.getPhoneNumber());
+            if(!responseSendOTP.getCodeResult().equals("100")){
+                throw new ApiRequestException("Can not send OTP to user");
+            }
             User newUser = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
             for (Integer roleID : user.getUserRoles()) {
                 roleService.insertUserRole(roleID, newUser.getUserID());

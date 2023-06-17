@@ -114,14 +114,11 @@ public class UserController {
                                                            HttpServletResponse response,
                                                            HttpServletRequest request) {
         try {
-            ResponseUser newSupplier = userService.createUser(user);
-            ResponseUserRegister responseUserRegister = new ResponseUserRegister(newSupplier.getPhoneNumber(), newSupplier.getFullName(), newSupplier.getIdentifyCard(), newSupplier.getRoleName(),newSupplier.getBalance());
-            esmService.sendOTP(user.getPhoneNumber());
+            ResponseUser newUserRegister = userService.createUser(user);
+            ResponseUserRegister responseUserRegister = new ResponseUserRegister(newUserRegister.getPhoneNumber(), newUserRegister.getFullName(), newUserRegister.getIdentifyCard(), newUserRegister.getRoleName(),newUserRegister.getBalance());
             return ResponseEntity.ok().body(responseUserRegister);
         } catch (ApiRequestException e) {
             throw e;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -144,17 +141,17 @@ public class UserController {
             throw e;
         }
     }
-    @PutMapping("updateStatus")
-    public ResponseEntity<?> updateStatusUser(@RequestParam String phoneNumber, @RequestParam String OTP) {
+    @PutMapping("/confirmOTP")
+    public ResponseEntity<?> updateStatusUser(@RequestBody RequestConfirmOTP requestConfirmOTP) {
         try{
-            ResponseCheckOTP responseCheckOTP = esmService.checkOTP(phoneNumber,OTP);
+            ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestConfirmOTP.getPhoneNumber(),requestConfirmOTP.getOTP_code());
             if(responseCheckOTP.getCodeResult().equalsIgnoreCase("100")){
-                User user = userService.findUserByPhoneNumber(phoneNumber);
+                User user = userService.findUserByPhoneNumber(requestConfirmOTP.getPhoneNumber());
                 userMapper.updateStatusUser(user.getUserID(),2);
                 return ResponseEntity.ok("Successfully");
             }
             else {
-                throw new RuntimeException("OTP is invalid");
+                return ResponseEntity.ok("OTP code is invalid");
             }
         }catch (ApiRequestException e){
             throw e;
