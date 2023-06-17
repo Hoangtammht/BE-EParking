@@ -23,6 +23,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -157,6 +158,32 @@ public class UserController {
             throw e;
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<String> forgotPassword(@RequestBody RequestForgotPassword requestForgotPassword){
+        try{
+            return ResponseEntity.ok(userService.forgotPassword(requestForgotPassword));
+        }catch (ApiRequestException e){
+            throw e;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @PostMapping("/confirmOTP")
+    public ResponseEntity<String> confirmOTPassword(@RequestBody RequestConfirmOTP requestConfirmOTP) throws IOException {
+        try {
+            return ResponseEntity.ok(userService.confirmPassword(requestConfirmOTP));
+        }catch (Exception e){
+            throw e;
+        }
+    }
+    @PutMapping("/newPasword")
+    public ResponseEntity<String> updateNewPassword(@RequestBody RequestNewPassword newPasswor){
+        try {
+            return ResponseEntity.ok(userService.updateNewPassword(newPasswor));
+        }catch (Exception e){
+            throw e;
         }
     }
 }
