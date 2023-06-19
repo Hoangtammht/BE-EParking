@@ -39,7 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/user/registerUser/**",
                 "/user/confirmOTP/**",
                 "/payment/returnPayment/**",
-                "/sms/**",
                 "/user/forgotPassword/**",
                 "/user/newPasword/**",
                 "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**"

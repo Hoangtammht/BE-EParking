@@ -27,21 +27,8 @@ public class CartController {
     @GetMapping("/getListReservation")
     public ResponseEntity<ResponseCart> getListReservation(){
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
-            ResponseCart responeCart = new ResponseCart();
-            List<Cart> listCart = cartService.getListCartByUserID();
-            int count = 0;
-            List<Reservation> reservations = new ArrayList<>();
-            for (Cart cart :
-                    listCart) {
-                count++;
-                reservations.add(reservationService.getReservationDetailByReservationID(cart.getReserveID()));
-            }
-            responeCart.setCarsNumber(count);
-            responeCart.setUserID(userID);
-            responeCart.setReservationDetail(reservations);
-            return ResponseEntity.ok(responeCart);
+            ResponseCart responseCart = cartService.getListReservation();
+            return ResponseEntity.ok(responseCart);
             }catch (ApiRequestException e){
             throw e;
         }

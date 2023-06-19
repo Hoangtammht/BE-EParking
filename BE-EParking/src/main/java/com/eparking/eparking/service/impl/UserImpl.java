@@ -225,6 +225,19 @@ public class UserImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public String confirmOTP(RequestConfirmOTP RequestConfirmOTP) throws IOException {
+        ResponseCheckOTP responseCheckOTP = esmService.checkOTP(RequestConfirmOTP.getPhoneNumber(),RequestConfirmOTP.getOTP_code());
+        if(responseCheckOTP.getCodeResult().equalsIgnoreCase("100")){
+            User user = userMapper.findUserByPhoneNumber(RequestConfirmOTP.getPhoneNumber());
+            userMapper.updateStatusUser(user.getUserID(),2);
+            return "Successfully";
+        }
+        else {
+            return "OTP code is invalid";
+        }
+    }
+
+    @Override
     public String updateNewPassword(RequestNewPassword password) {
         User existingUser = userMapper.findUserByPhoneNumber(password.getPhoneNumber());
         if(existingUser!=null){

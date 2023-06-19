@@ -1,10 +1,11 @@
 package com.eparking.eparking.service.impl;
 
+import com.eparking.eparking.dao.CarDetailMapper;
+import com.eparking.eparking.dao.ParkingMapper;
 import com.eparking.eparking.dao.ReservationMapper;
 import com.eparking.eparking.domain.Parking;
 import com.eparking.eparking.domain.Reservation;
-import com.eparking.eparking.domain.response.ResponseParking;
-import com.eparking.eparking.domain.response.ResponseReservation;
+import com.eparking.eparking.domain.response.*;
 import com.eparking.eparking.domain.resquest.RequestReservation;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ReservationService;
@@ -28,6 +29,8 @@ import java.util.List;
 public class ReservationImpl implements ReservationService {
     private final ReservationMapper reservationMapper;
     private final UserService userService;
+    private final ParkingMapper parkingMapper;
+    private final CarDetailMapper carDetailMapper;
     @Override
     public Reservation getReservationDetailByReservationID(int reserveID) {
         try{
@@ -73,6 +76,17 @@ public class ReservationImpl implements ReservationService {
         }catch (Exception e){
             throw new ApiRequestException("Failed to update status reservation: " + e);
         }
+    }
+
+    @Override
+    public ResponseGetReservation getReservationByID(int reserveID) {
+        ResponseReservation reservation = getResponseReservationByReservationID(reserveID);
+        ResponseUser responseUser = userService.getUserProfile();
+        ResponseParking responseParking = parkingMapper.findParkingByParkingID(reservation.getParkingID());
+        ResponseCarDetail carDetail = carDetailMapper.findCarDetailByCarID(reservation.getCarID());
+        ResponseUserRegister responseUserRegister = new ResponseUserRegister(responseUser.getPhoneNumber(),responseUser.getFullName(), responseUser.getIdentifyCard(), responseUser.getRoleName(),responseUser.getBalance());
+        ResponseGetReservation responseGetReservation = new ResponseGetReservation(reservation.getReserveID(),responseUserRegister,responseParking,reservation.getAddress(),reservation.getPricing(),reservation.getStatusID(), reservation.getStartDateTime(),reservation.getEndDatetime(),carDetail,reservation.getTotalPrice());
+        return responseGetReservation;
     }
 
     @Override

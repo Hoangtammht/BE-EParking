@@ -31,4 +31,5 @@ public interface UserService {
     String forgotPassword(RequestForgotPassword requestForgotPassword) throws IOException;
     String confirmPassword(RequestConfirmOTP requestConfirmOTP) throws IOException;
     String updateNewPassword(RequestNewPassword password);
+    String confirmOTP(RequestConfirmOTP RequestConfirmOTP) throws IOException;
 }

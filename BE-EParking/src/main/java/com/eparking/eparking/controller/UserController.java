@@ -126,8 +126,8 @@ public class UserController {
     @GetMapping("/getUserProfile")
     public ResponseEntity<ResponseUser> getUserProfile(HttpServletResponse response, HttpServletRequest request) {
         try {
-            ResponseUser newSupplier = userService.getUserProfile();
-            return ResponseEntity.ok().body(newSupplier);
+            ResponseUser userProfile = userService.getUserProfile();
+            return ResponseEntity.ok().body(userProfile);
         } catch (ApiRequestException e) {
             throw e;
         }
@@ -145,15 +145,7 @@ public class UserController {
     @PutMapping("/confirmOTP")
     public ResponseEntity<?> updateStatusUser(@RequestBody RequestConfirmOTP requestConfirmOTP) {
         try{
-            ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestConfirmOTP.getPhoneNumber(),requestConfirmOTP.getOTP_code());
-            if(responseCheckOTP.getCodeResult().equalsIgnoreCase("100")){
-                User user = userService.findUserByPhoneNumber(requestConfirmOTP.getPhoneNumber());
-                userMapper.updateStatusUser(user.getUserID(),2);
-                return ResponseEntity.ok("Successfully");
-            }
-            else {
-                return ResponseEntity.ok("OTP code is invalid");
-            }
+           return ResponseEntity.ok(userService.confirmOTP(requestConfirmOTP));
         }catch (ApiRequestException e){
             throw e;
         } catch (IOException e) {
