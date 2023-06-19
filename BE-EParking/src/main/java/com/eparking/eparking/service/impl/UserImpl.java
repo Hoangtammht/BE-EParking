@@ -8,12 +8,12 @@ import com.eparking.eparking.domain.Role;
 import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.*;
-import com.eparking.eparking.domain.resquest.RequestCreateUser;
-import com.eparking.eparking.domain.resquest.UpdateUser;
+import com.eparking.eparking.domain.resquest.*;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -198,5 +199,52 @@ public class UserImpl implements UserDetailsService, UserService {
         List<Role> userRoles = roleMapper.findRoleForUser(userID);
         responseUserRegister.setRoleName(userRoles);
         return responseUserRegister;
+    }
+    @Transactional
+    @Override
+    public String forgotPassword(RequestForgotPassword requestForgotPassword) throws IOException {
+        User existingUser = userMapper.findUserByPhoneNumber(requestForgotPassword.getPhoneNumber());
+        if(existingUser!=null){
+            ResponseSendOTP responseSendOTP = esmService.sendOTP(requestForgotPassword.getPhoneNumber());
+            if(!responseSendOTP.getCodeResult().equals("100")){
+                throw new ApiRequestException("Can not send OTP to user");
+            }
+            return "User is exist";
+        }
+        return "This user is not exist";
+    }
+
+    @Override
+    public String confirmPassword(RequestConfirmOTP requestConfirmOTP) throws IOException {
+        ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestConfirmOTP.getPhoneNumber(),requestConfirmOTP.getOTP_code());
+        if(responseCheckOTP.getCodeResult().equalsIgnoreCase("100")){
+            return "Successful";
+        }else {
+            return "OTP code is invalid";
+        }
+    }
+
+    @Override
+    public String confirmOTP(RequestConfirmOTP RequestConfirmOTP) throws IOException {
+        ResponseCheckOTP responseCheckOTP = esmService.checkOTP(RequestConfirmOTP.getPhoneNumber(),RequestConfirmOTP.getOTP_code());
+        if(responseCheckOTP.getCodeResult().equalsIgnoreCase("100")){
+            User user = userMapper.findUserByPhoneNumber(RequestConfirmOTP.getPhoneNumber());
+            userMapper.updateStatusUser(user.getUserID(),2);
+            return "Successfully";
+        }
+        else {
+            return "OTP code is invalid";
+        }
+    }
+
+    @Override
+    public String updateNewPassword(RequestNewPassword password) {
+        User existingUser = userMapper.findUserByPhoneNumber(password.getPhoneNumber());
+        if(existingUser!=null){
+            String passwordEncoded = passwordEncoder.encode(password.getPassword());
+            userMapper.updatePassword(existingUser.getUserID(),passwordEncoded);
+            return "Recover successfully";
+        }
+        return "This user is not exist";
     }
 }

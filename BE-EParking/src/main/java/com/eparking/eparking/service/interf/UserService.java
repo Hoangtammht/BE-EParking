@@ -5,9 +5,10 @@ import com.eparking.eparking.domain.User;
 import com.eparking.eparking.domain.UserRole;
 import com.eparking.eparking.domain.response.ResponseUser;
 import com.eparking.eparking.domain.response.ResponseUserRegister;
-import com.eparking.eparking.domain.resquest.RequestCreateUser;
-import com.eparking.eparking.domain.resquest.UpdateUser;
+import com.eparking.eparking.domain.resquest.*;
+import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
@@ -27,4 +28,8 @@ public interface UserService {
     void updateWalletForUser(String responseCode,Double Balance);
     ResponseUserRegister findResponseUserRegisterByUserID(int userID);
 
+    String forgotPassword(RequestForgotPassword requestForgotPassword) throws IOException;
+    String confirmPassword(RequestConfirmOTP requestConfirmOTP) throws IOException;
+    String updateNewPassword(RequestNewPassword password);
+    String confirmOTP(RequestConfirmOTP RequestConfirmOTP) throws IOException;
 }

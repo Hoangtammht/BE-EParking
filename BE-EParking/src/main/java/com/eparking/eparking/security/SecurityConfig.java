@@ -3,6 +3,7 @@ package com.eparking.eparking.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,9 +39,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/user/registerUser/**",
                 "/user/confirmOTP/**",
                 "/payment/returnPayment/**",
-                "/sms/**",
+                "/user/forgotPassword/**",
+                "/user/newPasword/**",
                 "/swagger-ui.html", "/webjars/**", "/v2/api-docs", "/swagger-resources/**"
-        ).permitAll();
+        ).permitAll()
+                .antMatchers(HttpMethod.PUT, "/user/confirmOTP/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/user/confirmOTP/**").permitAll();
         http.authorizeRequests().antMatchers(PUT, "/user/updateUser").hasAnyAuthority("ROLE_SUPPLIER", "ROLE_CUSTOMER");
         http.authorizeRequests().antMatchers(POST,"/car/addCar").hasAnyAuthority("ROLE_CUSTOMER");
         http.authorizeRequests().antMatchers(POST,"/parking/createParking").hasAnyAuthority("ROLE_SUPPLIER");

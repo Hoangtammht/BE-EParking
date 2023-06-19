@@ -79,7 +79,6 @@ public class ReservationController {
             User userSup = userMapper.findUserByUserID(responseParking.getUserID());
             userMapper.updateWalletForUser(userSup.getUserID(), userSup.getBalance() + requestReservation.getTotalPrice());
             parkingMapper.updateParkForParking(requestReservation.getParkingID(),responseParking.getPark() - 1);
-
             Map<String, Object> jsonResponse = new HashMap<>();
             jsonResponse.put("status", "success");
             jsonResponse.put("message", "Reservation successful");
@@ -92,13 +91,7 @@ public class ReservationController {
     @GetMapping("/getReservationByID/{reserveID}")
     public ResponseEntity<ResponseGetReservation> getReservationByID(@PathVariable int reserveID){
         try{
-            ResponseReservation reservation = reservationService.getResponseReservationByReservationID(reserveID);
-            ResponseUser responseUser = userService.getUserProfile();
-            ResponseParking responseParking = parkingMapper.findParkingByParkingID(reservation.getParkingID());
-            ResponseCarDetail carDetail = carDetailMapper.findCarDetailByCarID(reservation.getCarID());
-            ResponseUserRegister responseUserRegister = new ResponseUserRegister(responseUser.getPhoneNumber(),responseUser.getFullName(), responseUser.getIdentifyCard(), responseUser.getRoleName(),responseUser.getBalance());
-            ResponseGetReservation responseGetReservation = new ResponseGetReservation(reservation.getReserveID(),responseUserRegister,responseParking,reservation.getAddress(),reservation.getPricing(),reservation.getStatusID(),
-                    reservation.getStartDateTime(),reservation.getEndDatetime(),carDetail,reservation.getTotalPrice());
+            ResponseGetReservation responseGetReservation = reservationService.getReservationByID(reserveID);
             return ResponseEntity.ok(responseGetReservation);
         }catch (Exception e){
             throw e;

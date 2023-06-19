@@ -23,6 +23,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -125,8 +126,8 @@ public class UserController {
     @GetMapping("/getUserProfile")
     public ResponseEntity<ResponseUser> getUserProfile(HttpServletResponse response, HttpServletRequest request) {
         try {
-            ResponseUser newSupplier = userService.getUserProfile();
-            return ResponseEntity.ok().body(newSupplier);
+            ResponseUser userProfile = userService.getUserProfile();
+            return ResponseEntity.ok().body(userProfile);
         } catch (ApiRequestException e) {
             throw e;
         }
@@ -144,19 +145,37 @@ public class UserController {
     @PutMapping("/confirmOTP")
     public ResponseEntity<?> updateStatusUser(@RequestBody RequestConfirmOTP requestConfirmOTP) {
         try{
-            ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestConfirmOTP.getPhoneNumber(),requestConfirmOTP.getOTP_code());
-            if(responseCheckOTP.getCodeResult().equalsIgnoreCase("100")){
-                User user = userService.findUserByPhoneNumber(requestConfirmOTP.getPhoneNumber());
-                userMapper.updateStatusUser(user.getUserID(),2);
-                return ResponseEntity.ok("Successfully");
-            }
-            else {
-                return ResponseEntity.ok("OTP code is invalid");
-            }
+           return ResponseEntity.ok(userService.confirmOTP(requestConfirmOTP));
         }catch (ApiRequestException e){
             throw e;
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<String> forgotPassword(@RequestBody RequestForgotPassword requestForgotPassword){
+        try{
+            return ResponseEntity.ok(userService.forgotPassword(requestForgotPassword));
+        }catch (ApiRequestException e){
+            throw e;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @PostMapping("/confirmOTP")
+    public ResponseEntity<String> confirmOTPassword(@RequestBody RequestConfirmOTP requestConfirmOTP) throws IOException {
+        try {
+            return ResponseEntity.ok(userService.confirmPassword(requestConfirmOTP));
+        }catch (Exception e){
+            throw e;
+        }
+    }
+    @PutMapping("/newPasword")
+    public ResponseEntity<String> updateNewPassword(@RequestBody RequestNewPassword newPasswor){
+        try {
+            return ResponseEntity.ok(userService.updateNewPassword(newPasswor));
+        }catch (Exception e){
+            throw e;
         }
     }
 }

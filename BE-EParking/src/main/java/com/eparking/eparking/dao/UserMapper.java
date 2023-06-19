@@ -24,4 +24,5 @@ public interface UserMapper {
     User findUserByUserID (int userID);
     ResponseUserRegister findResponseUserRegisterByUserID(int userID);
     void updateStatusUser(int userID, int userstatus);
+    void updatePassword(int userID, String password);
 }

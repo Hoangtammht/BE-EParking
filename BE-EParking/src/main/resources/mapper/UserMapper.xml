@@ -79,4 +79,9 @@
         FROM User
         WHERE userID = #{userID}
     </select>
+    <update id="updatePassword" parameterType="com.eparking.eparking.domain.User">
+        UPDATE User
+        SET password = #{password}
+        WHERE userID = #{userID}
+    </update>
 </mapper>
