@@ -36,7 +36,7 @@ public class ReservationImpl implements ReservationService {
         try{
             return reservationMapper.getReservationDetailByReservationID(reserveID);
         }catch (Exception e){
-            throw new ApiRequestException("Fail to get detail reservation: " + e);
+            throw new ApiRequestException("Fail to get detail reservation: " + e.getMessage());
         }
     }
 
@@ -51,7 +51,7 @@ public class ReservationImpl implements ReservationService {
             Long totalCount = reservationMapper.getNumberOfListOrder(userID,statusID);
             return new PageImpl<>(RepoReservation,pageable,totalCount);
         }catch (Exception e){
-            throw new ApiRequestException("Failed to get the list order by this user: " + e);
+            throw new ApiRequestException("Failed to get the list order by this user: " + e.getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ public class ReservationImpl implements ReservationService {
                 reservationMapper.createReservation(requestReservation, userID);
                 return reservationMapper.getNewlyInsertedReservation(userID);
             } catch (Exception e) {
-                throw new ApiRequestException("Failed to create reservation: " + e);
+                throw new ApiRequestException("Failed to create reservation: " + e.getMessage());
         }
     }
 
@@ -74,7 +74,7 @@ public class ReservationImpl implements ReservationService {
             reservationMapper.updateStatus(statusID,reserveID);
             return reservationMapper.getResponseReservationByReservationID(reserveID);
         }catch (Exception e){
-            throw new ApiRequestException("Failed to update status reservation: " + e);
+            throw new ApiRequestException("Failed to update status reservation: " + e.getMessage());
         }
     }
 
@@ -94,11 +94,11 @@ public class ReservationImpl implements ReservationService {
         try{
             ResponseReservation reservation = reservationMapper.getResponseReservationByReservationID(reserveID);
             if(reservation==null){
-                throw new ApiRequestException("Not have any reservation with this ID: ");
+                throw new ApiRequestException("Not have any reservation with this ID");
             }
             return reservation;
         }catch (Exception e){
-            throw new ApiRequestException("Failed to get reservation by this ID: " + e);
+            throw new ApiRequestException("Failed to get reservation by this ID: " + e.getMessage());
         }
     }
 }

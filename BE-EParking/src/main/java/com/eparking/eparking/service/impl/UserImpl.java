@@ -13,7 +13,6 @@ import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,13 +61,23 @@ public class UserImpl implements UserDetailsService, UserService {
 
     @Override
     public User findUserByPhoneNumber(String phoneNumber) {
-        return userMapper.findUserByPhoneNumber(phoneNumber);
+        try {
+            return userMapper.findUserByPhoneNumber(phoneNumber);
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to find user by phone number");
+        }
     }
+
 
     @Override
     public ResponseUser findResponseUserByPhone(String phoneNumber) {
-        return userMapper.findResponseUserByPhone(phoneNumber);
+        try {
+            return userMapper.findResponseUserByPhone(phoneNumber);
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to find response user by phone number");
+        }
     }
+
 
     @Override
     public ResponseUser updateUserByUserID(UpdateUser updateUser) {
@@ -149,7 +158,7 @@ public class UserImpl implements UserDetailsService, UserService {
             List<Role> userRoles = roleMapper.findRoleForUser(newUser.getUserID());
             responseUser = new ResponseUser(newUser.getUserID(), newUser.getPhoneNumber(), newUser.getFullName(), newUser.getIdentifyCard(),userRoles, newUser.getBalance(),carDetailList,parkingList);
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to create user: " + e);
+            throw new ApiRequestException("Failed to create user: " + e.getMessage());
         }
         return responseUser;
     }
@@ -167,10 +176,10 @@ public class UserImpl implements UserDetailsService, UserService {
                 Double userWallet = user.getBalance() + Balance;
                 userMapper.updateWalletForUser(userMapper.findUserByPhoneNumber(authentication.getName()).getUserID(),userWallet);
             }else {
-                throw new ApiRequestException("Failed to update wallet for user because responseCode invaid: ");
+                throw new ApiRequestException("Failed to update wallet for user because responseCode invalid");
             }
         }catch (Exception e){
-            throw new ApiRequestException("Failed to update wallet for user: " + e);
+            throw new ApiRequestException("Failed to update wallet for user: " + e.getMessage());
         }
     }
 
@@ -188,18 +197,27 @@ public class UserImpl implements UserDetailsService, UserService {
 
     @Override
     public List<UserRole> getRoleByUserID() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String phoneNumber = authentication.getName();
-        return roleService.findRoleByPhoneNumber(phoneNumber);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String phoneNumber = authentication.getName();
+            return roleService.findRoleByPhoneNumber(phoneNumber);
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to get user roles");
+        }
     }
 
     @Override
     public ResponseUserRegister findResponseUserRegisterByUserID(int userID) {
-        ResponseUserRegister responseUserRegister = userMapper.findResponseUserRegisterByUserID(userID);
-        List<Role> userRoles = roleMapper.findRoleForUser(userID);
-        responseUserRegister.setRoleName(userRoles);
-        return responseUserRegister;
+        try {
+            ResponseUserRegister responseUserRegister = userMapper.findResponseUserRegisterByUserID(userID);
+            List<Role> userRoles = roleMapper.findRoleForUser(userID);
+            responseUserRegister.setRoleName(userRoles);
+            return responseUserRegister;
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to find response user register");
+        }
     }
+
     @Transactional
     @Override
     public String forgotPassword(RequestForgotPassword requestForgotPassword) throws IOException {

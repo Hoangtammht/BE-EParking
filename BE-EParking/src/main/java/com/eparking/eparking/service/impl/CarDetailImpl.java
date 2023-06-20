@@ -41,8 +41,7 @@ public class CarDetailImpl implements CarDetailService {
             carDetailMapper.addCar(carDetail);
             return carDetailMapper.getNewlyCar();
         } catch (Exception e) {
-            // Handle the exception appropriately
-            throw new RuntimeException("Failed to add car");
+            throw new ApiRequestException("Failed to add car: " + e.getMessage());
         }
     }
 
@@ -52,7 +51,7 @@ public class CarDetailImpl implements CarDetailService {
         try {
             carDetailMapper.removeCar(carID);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to remove car");
+            throw new ApiRequestException("Failed to remove car: " + e.getMessage());
         }
     }
 
@@ -76,7 +75,7 @@ public class CarDetailImpl implements CarDetailService {
             long totalCount = carDetailMapper.getNumberOfReservationByStatus(status);
             return new PageImpl<>(carsParking, pageable, totalCount);
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to find the list of cars by revenue status of the supplier");
+            throw new ApiRequestException("Failed to find the list of cars by revenue status of the supplier: " + e.getMessage());
         }
     }
 
@@ -87,7 +86,7 @@ public class CarDetailImpl implements CarDetailService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             return carDetailMapper.findCarDetailByUserID(userService.findUserByPhoneNumber(authentication.getName()).getUserID());
         }catch (Exception e){
-            throw new ApiRequestException("Failed to get list car by this user");
+            throw new ApiRequestException("Failed to get list car by this user: " + e.getMessage());
         }
     }
 

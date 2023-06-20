@@ -47,7 +47,7 @@ public class ParkingImpl implements ParkingService {
             clearNearbyParkingCache();
             return parkingMapper.findParkingByParkingID(parking.getParkingID());
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to create parking: " + e);
+            throw new ApiRequestException("Failed to create parking: " + e.getMessage());
         }
     }
 
@@ -57,7 +57,7 @@ public class ParkingImpl implements ParkingService {
             parkingMapper.createSpecialDate(specialDate);
             return specialDate;
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to create parking: " + e);
+            throw new ApiRequestException("Failed to create parking: " + e.getMessage());
         }
     }
 
@@ -67,7 +67,7 @@ public class ParkingImpl implements ParkingService {
             parkingMapper.addDatesForParking(parkingDates);
             return parkingDates;
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to add date for Parking : " + e);
+            throw new ApiRequestException("Failed to add date for Parking : " + e.getMessage());
         }
     }
 
@@ -77,7 +77,7 @@ public class ParkingImpl implements ParkingService {
             parkingMapper.addSpecialDatesForParking(parkingSpecialDates);
             return parkingSpecialDates;
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to add date for Special Parking : " + e);
+            throw new ApiRequestException("Failed to add date for Special Parking : " + e.getMessage());
         }
     }
 
@@ -87,7 +87,7 @@ public class ParkingImpl implements ParkingService {
             ResponseParking parkingDetail = parkingMapper.findParkingByParkingID(parkingID);
             return parkingDetail;
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to get parking detail: " + e);
+            throw new ApiRequestException("Failed to get parking detail: " + e.getMessage());
         }
     }
 
@@ -102,7 +102,7 @@ public class ParkingImpl implements ParkingService {
             long totalCount = parkingMapper.getNumberOfParkings();
             return new PageImpl<>(parkingList, pageable, totalCount);
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to get all Parking: " + e);
+            throw new ApiRequestException("Failed to get all Parking: " + e.getMessage());
         }
     }
 
@@ -132,7 +132,7 @@ public class ParkingImpl implements ParkingService {
             long totalCount = parkingMapper.getNumberOfParkings();
             return new PageImpl<>(parkingList, pageable, totalCount);
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to get list Parking Nearby: " + e);
+            throw new ApiRequestException("Failed to get list Parking Nearby: " + e.getMessage());
         }
     }
 
@@ -146,7 +146,7 @@ public class ParkingImpl implements ParkingService {
             parkingMapper.updatePricingByParkingID(parkingID, pricing);
             return parkingMapper.findParkingByParkingID(parkingID);
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to update pricing by parkingID: " + e);
+            throw new ApiRequestException("Failed to update pricing by parkingID: " + e.getMessage());
         }
     }
 
@@ -159,7 +159,7 @@ public class ParkingImpl implements ParkingService {
             parkingMapper.updateParkForParking(parkingID, park);
             return parkingMapper.findParkingByParkingID(parkingID);
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to update slot by parkingID: " + e);
+            throw new ApiRequestException("Failed to update slot by parkingID: " + e.getMessage());
         }
     }
 
