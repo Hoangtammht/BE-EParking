@@ -80,13 +80,17 @@ public class ReservationImpl implements ReservationService {
 
     @Override
     public ResponseGetReservation getReservationByID(int reserveID) {
-        ResponseReservation reservation = getResponseReservationByReservationID(reserveID);
-        ResponseUser responseUser = userService.getUserProfile();
-        ResponseParking responseParking = parkingMapper.findParkingByParkingID(reservation.getParkingID());
-        ResponseCarDetail carDetail = carDetailMapper.findCarDetailByCarID(reservation.getCarID());
-        ResponseUserRegister responseUserRegister = new ResponseUserRegister(responseUser.getPhoneNumber(),responseUser.getFullName(), responseUser.getIdentifyCard(), responseUser.getRoleName(),responseUser.getBalance());
-        ResponseGetReservation responseGetReservation = new ResponseGetReservation(reservation.getReserveID(),responseUserRegister,responseParking,reservation.getAddress(),reservation.getPricing(),reservation.getStatusID(), reservation.getStartDateTime(),reservation.getEndDatetime(),carDetail,reservation.getTotalPrice());
-        return responseGetReservation;
+        try {
+            ResponseReservation reservation = getResponseReservationByReservationID(reserveID);
+            ResponseUser responseUser = userService.getUserProfile();
+            ResponseParking responseParking = parkingMapper.findParkingByParkingID(reservation.getParkingID());
+            ResponseCarDetail carDetail = carDetailMapper.findCarDetailByCarID(reservation.getCarID());
+            ResponseUserRegister responseUserRegister = new ResponseUserRegister(responseUser.getPhoneNumber(), responseUser.getFullName(), responseUser.getIdentifyCard(), responseUser.getRoleName(), responseUser.getBalance());
+            ResponseGetReservation responseGetReservation = new ResponseGetReservation(reservation.getReserveID(), responseUserRegister, responseParking, reservation.getAddress(), reservation.getPricing(), reservation.getStatusID(), reservation.getStartDateTime(), reservation.getEndDatetime(), carDetail, reservation.getTotalPrice());
+            return responseGetReservation;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get reservation by ID: " + e.getMessage());
+        }
     }
 
     @Override

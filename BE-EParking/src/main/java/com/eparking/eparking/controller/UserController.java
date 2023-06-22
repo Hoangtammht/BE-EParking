@@ -86,7 +86,7 @@ public class UserController {
                 new ObjectMapper().writeValue(response.getOutputStream(), tokens);
             }
             else {
-                throw new RuntimeException("This user is denied to login");
+                throw new ApiRequestException("This user is denied to login");
             }
         }catch (Exception e){
             response.setHeader("error", e.getMessage());

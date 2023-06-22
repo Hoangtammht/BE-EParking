@@ -103,11 +103,6 @@ public class ReservationController {
     public ResponseEntity<ResponseReservation> updateStatus(@RequestBody RequestUpdatestatus requestReservation){
         try{
             ResponseReservation responseReservation = reservationService.updateStatus(requestReservation.getStatusID(), requestReservation.getReserveID());
-            Reservation reservation = reservationService.getReservationDetailByReservationID(requestReservation.getReserveID());
-            if(responseReservation.getStatusID() == 3){
-                ResponseParking responseParking = parkingMapper.findParkingByParkingID(reservation.getParkingID());
-                parkingMapper.updateParkForParking(responseParking.getParkingID(),responseParking.getPark() + 1);
-            }
             return ResponseEntity.ok(responseReservation);
 
         }catch (ApiRequestException e){

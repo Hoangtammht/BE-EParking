@@ -115,7 +115,7 @@ public class PaymentService {
             response.put("url", paymentUrl);
             return ResponseEntity.ok().body(response);
         }catch (Exception e){
-            throw new ApiRequestException("Fail to create payment action: " + e);
+            throw new ApiRequestException("Fail to create payment action: " + e.getMessage());
         }
     }
     public ResponseEntity<String> handleIPN(HttpServletRequest request){
