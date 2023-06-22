@@ -12,8 +12,7 @@ import java.time.ZonedDateTime;
 public class ApiException {
     private String title;
     private int status;
-    private String detail;
+    private String message;
     private ZonedDateTime timestamp;
-    private String developerMessage;
 
 }
