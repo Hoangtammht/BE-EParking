@@ -97,9 +97,37 @@
         FROM Reservation
         WHERE userID = R.userID)
     </select>
+
     <update id="updateStatus" parameterType="com.eparking.eparking.domain.response.ResponseReservation">
         UPDATE Reservation
         SET statusID = #{statusID}
         WHERE reserveID = #{reserveID}
     </update>
+
+    <select id="getOverlappingReservations" resultType="com.eparking.eparking.domain.response.ResponseReservation">
+        <![CDATA[
+  SELECT
+    reserveID,
+    R.userID,
+    R.parkingID,
+    parkingName,
+    address,
+    pricing,
+    statusID,
+    startDateTime,
+    endDatetime,
+    R.carID,
+    licensePlate,
+    R.totalPrice
+  FROM Reservation R
+  JOIN Parking P ON R.parkingID = P.parkingID
+  JOIN User U ON R.userID = U.userID
+  JOIN CarDetail C ON R.carID = C.carID
+  WHERE R.parkingID = #{parkingID}
+    AND (R.startDateTime <= #{endDateTime} AND R.endDatetime >= #{startDateTime})
+  ]]>
+    </select>
+
+
+
 </mapper>

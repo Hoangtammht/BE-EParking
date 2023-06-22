@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -59,14 +60,26 @@ public class ReservationImpl implements ReservationService {
     @Transactional
     public ResponseReservation createReservation(RequestReservation requestReservation) {
         try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
+            List<ResponseReservation> overlappingReservations = reservationMapper.getOverlappingReservations(
+                    requestReservation.getParkingID(),
+                    requestReservation.getStartDateTime(),
+                    requestReservation.getEndDatetime()
+            );
+            ResponseParking responseParking = parkingMapper.findParkingByParkingID(requestReservation.getParkingID());
+            int availableParkingSpaces = responseParking.getPark() - overlappingReservations.size();
+            if (availableParkingSpaces >= 1) {
                 reservationMapper.createReservation(requestReservation, userID);
                 return reservationMapper.getNewlyInsertedReservation(userID);
-            } catch (Exception e) {
-                throw new ApiRequestException("Failed to create reservation: " + e);
+            } else {
+                throw new ApiRequestException("No available parking spaces in the requested period.");
+            }
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to create reservation: " + e.getMessage());
         }
     }
+
 
     @Override
     public ResponseReservation updateStatus(int statusID, int reserveID) {
