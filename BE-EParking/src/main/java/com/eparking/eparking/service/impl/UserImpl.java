@@ -145,10 +145,10 @@ public class UserImpl implements UserDetailsService, UserService {
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userMapper.createSupplier(user,1);
-//            ResponseSendOTP responseSendOTP = esmService.sendOTP(user.getPhoneNumber());
-//            if(!responseSendOTP.getCodeResult().equals("100")){
-//                throw new ApiRequestException("Can not send OTP to user");
-//            }
+            ResponseSendOTP responseSendOTP = esmService.sendOTP(user.getPhoneNumber());
+            if(!responseSendOTP.getCodeResult().equals("100")){
+                throw new ApiRequestException("Can not send OTP to user");
+            }
             User newUser = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
             for (Integer roleID : user.getUserRoles()) {
                 roleService.insertUserRole(roleID, newUser.getUserID());

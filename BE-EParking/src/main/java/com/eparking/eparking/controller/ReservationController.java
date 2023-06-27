@@ -37,7 +37,6 @@ public class ReservationController {
     private final ReservationService reservationService;
     private final UserService userService;
     private final ParkingMapper parkingMapper;
-    private final CarDetailMapper carDetailMapper;
     private final UserMapper userMapper;
     @GetMapping("/getListOrder")
     public ResponseEntity<Page<ResponseReservation>> getListParking(
@@ -79,7 +78,6 @@ public class ReservationController {
             userMapper.updateWalletForUser(user.getUserID(),user.getBalance() - requestReservation.getTotalPrice());
             User userSup = userMapper.findUserByUserID(responseParking.getUserID());
             userMapper.updateWalletForUser(userSup.getUserID(), userSup.getBalance() + requestReservation.getTotalPrice());
-//            parkingMapper.updateParkForParking(requestReservation.getParkingID(),responseParking.getPark() - 1);
             Map<String, Object> jsonResponse = new HashMap<>();
             jsonResponse.put("status", "success");
             jsonResponse.put("message", "Reservation successful");
