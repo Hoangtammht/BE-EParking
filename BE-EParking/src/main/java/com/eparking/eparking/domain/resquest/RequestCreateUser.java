@@ -16,7 +16,6 @@ public class RequestCreateUser {
     @ApiModelProperty(example= "123456")
     private String password;
     @ApiModelProperty(example = "John Doe")
-
     private String fullName;
     @ApiModelProperty(example = "111111111111")
     private String identifyCard;

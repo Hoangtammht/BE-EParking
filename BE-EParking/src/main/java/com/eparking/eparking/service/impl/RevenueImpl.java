@@ -34,7 +34,7 @@ public class RevenueImpl implements RevenueService {
             responseRevenueParking.setRevenue(revenue);
             return responseRevenueParking;
         }catch (Exception e){
-            throw new ApiRequestException("Fail to get the revenue of parking today");
+            throw new ApiRequestException("Fail to get the revenue of parking today" + e.getMessage());
         }
     }
 
@@ -61,7 +61,7 @@ public class RevenueImpl implements RevenueService {
             responseRevenueAllParking.setRevenue(totalRevenue);
             return responseRevenueAllParking;
         } catch (Exception e) {
-            throw new ApiRequestException("Fail to get the revenue of all parking today");
+            throw new ApiRequestException("Fail to get the revenue of all parking today" + e.getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ public class RevenueImpl implements RevenueService {
             responseRevenueParkingDuration.setRevenue(revenue);
             return responseRevenueParkingDuration;
         }catch (Exception e){
-            throw new ApiRequestException("Fail to get the revenue of parking duration time");
+            throw new ApiRequestException("Fail to get the revenue of parking duration time" + e.getMessage());
         }
     }
 
@@ -106,7 +106,7 @@ public class RevenueImpl implements RevenueService {
             responseRevenueAllParking.setRevenue(totalRevenue);
             return responseRevenueAllParking;
         } catch (Exception e) {
-            throw new ApiRequestException("Fail to get the revenue of all parking during the specified duration");
+            throw new ApiRequestException("Fail to get the revenue of all parking during the specified duration" + e.getMessage());
         }
     }
 

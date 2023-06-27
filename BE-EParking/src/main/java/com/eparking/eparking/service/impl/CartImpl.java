@@ -35,26 +35,30 @@ public class CartImpl implements CartService {
         try{
             return cart;
         }catch (Exception e){
-            throw new ApiRequestException("Fail to get list cart by this user");
+            throw new ApiRequestException("Fail to get list cart" + e.getMessage());
         }
     }
 
     @Override
     public ResponseCart getListReservation() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
-        ResponseCart responeCart = new ResponseCart();
-        List<Cart> listCart = getListCartByUserID();
-        int count = 0;
-        List<Reservation> reservations = new ArrayList<>();
-        for (Cart cart :
-                listCart) {
-            count++;
-            reservations.add(reservationService.getReservationDetailByReservationID(cart.getReserveID()));
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int userID = userService.findUserByPhoneNumber(authentication.getName()).getUserID();
+            ResponseCart responeCart = new ResponseCart();
+            List<Cart> listCart = getListCartByUserID();
+            int count = 0;
+            List<Reservation> reservations = new ArrayList<>();
+            for (Cart cart :
+                    listCart) {
+                count++;
+                reservations.add(reservationService.getReservationDetailByReservationID(cart.getReserveID()));
+            }
+            responeCart.setCarsNumber(count);
+            responeCart.setUserID(userID);
+            responeCart.setReservationDetail(reservations);
+            return responeCart;
+        }catch (Exception e){
+            throw new ApiRequestException("Fail to get list reservation" + e.getMessage());
         }
-        responeCart.setCarsNumber(count);
-        responeCart.setUserID(userID);
-        responeCart.setReservationDetail(reservations);
-        return responeCart;
     }
 }

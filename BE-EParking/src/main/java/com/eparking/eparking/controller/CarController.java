@@ -36,8 +36,8 @@ public class CarController {
                     .toUriString());
             ResponseCarDetail addedCars = carDetailService.addCar(resquestCar.getLicensePlate());
             return ResponseEntity.created(uri).body(addedCars);
-        } catch (Exception e) {
-            throw new ApiRequestException("Oops cannot add Information'Car to user");
+        } catch (ApiRequestException e) {
+            throw e;
         }
     }
 
@@ -49,8 +49,8 @@ public class CarController {
             ResponseCarDetail carDetail = carDetailMapper.findCarDetailByCarID(requestCarID.getCarID());
             carDetailService.removeCar(requestCarID.getCarID());
             return ResponseEntity.ok(carDetail);
-        } catch (Exception e) {
-            throw new ApiRequestException("Oops cannot remove car of user");
+        } catch (ApiRequestException e) {
+            throw e;
         }
     }
 
@@ -72,7 +72,7 @@ public class CarController {
     public ResponseEntity<List<ResponseCarDetail>> getListCarByUserID(){
         try{
             return ResponseEntity.ok(carDetailService.findCarDetailByUserID());
-        }catch (Exception e){
+        }catch (ApiRequestException e){
             throw e;
         }
     }

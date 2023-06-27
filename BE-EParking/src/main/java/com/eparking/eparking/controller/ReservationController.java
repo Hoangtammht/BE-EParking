@@ -12,6 +12,7 @@ import com.eparking.eparking.domain.resquest.RequestUpdatestatus;
 import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.ReservationService;
 import com.eparking.eparking.service.interf.UserService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -93,22 +94,18 @@ public class ReservationController {
         try{
             ResponseGetReservation responseGetReservation = reservationService.getReservationByID(reserveID);
             return ResponseEntity.ok(responseGetReservation);
-        }catch (Exception e){
+        }catch (ApiRequestException e){
             throw e;
         }
     }
+
     @PutMapping("/updateStatus")
     public ResponseEntity<ResponseReservation> updateStatus(@RequestBody RequestUpdatestatus requestReservation){
         try{
             ResponseReservation responseReservation = reservationService.updateStatus(requestReservation.getStatusID(), requestReservation.getReserveID());
-            Reservation reservation = reservationService.getReservationDetailByReservationID(requestReservation.getReserveID());
-            if(responseReservation.getStatusID() == 3){
-                ResponseParking responseParking = parkingMapper.findParkingByParkingID(reservation.getParkingID());
-                parkingMapper.updateParkForParking(responseParking.getParkingID(),responseParking.getPark() + 1);
-            }
             return ResponseEntity.ok(responseReservation);
 
-        }catch (Exception e){
+        }catch (ApiRequestException e){
             throw e;
         }
     }

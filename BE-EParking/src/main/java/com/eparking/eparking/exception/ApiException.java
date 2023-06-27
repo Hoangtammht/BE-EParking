@@ -10,10 +10,9 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiException {
+    private String title;
+    private int status;
     private String message;
-    private Throwable throwable;
-    private HttpStatus httpStatus;
     private ZonedDateTime timestamp;
-
 
 }

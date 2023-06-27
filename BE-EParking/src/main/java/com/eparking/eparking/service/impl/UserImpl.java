@@ -13,7 +13,6 @@ import com.eparking.eparking.exception.ApiRequestException;
 import com.eparking.eparking.service.interf.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,13 +61,23 @@ public class UserImpl implements UserDetailsService, UserService {
 
     @Override
     public User findUserByPhoneNumber(String phoneNumber) {
-        return userMapper.findUserByPhoneNumber(phoneNumber);
+        try {
+            return userMapper.findUserByPhoneNumber(phoneNumber);
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to find user by phone number" + e.getMessage());
+        }
     }
+
 
     @Override
     public ResponseUser findResponseUserByPhone(String phoneNumber) {
-        return userMapper.findResponseUserByPhone(phoneNumber);
+        try {
+            return userMapper.findResponseUserByPhone(phoneNumber);
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to find response user by phone number" + e.getMessage());
+        }
     }
+
 
     @Override
     public ResponseUser updateUserByUserID(UpdateUser updateUser) {
@@ -120,7 +129,7 @@ public class UserImpl implements UserDetailsService, UserService {
             );
             return responseUser;
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to update user by userID");
+            throw new ApiRequestException("Failed to update user by userID" + e.getMessage());
         }
     }
 
@@ -136,10 +145,10 @@ public class UserImpl implements UserDetailsService, UserService {
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userMapper.createSupplier(user,1);
-            ResponseSendOTP responseSendOTP = esmService.sendOTP(user.getPhoneNumber());
-            if(!responseSendOTP.getCodeResult().equals("100")){
-                throw new ApiRequestException("Can not send OTP to user");
-            }
+//            ResponseSendOTP responseSendOTP = esmService.sendOTP(user.getPhoneNumber());
+//            if(!responseSendOTP.getCodeResult().equals("100")){
+//                throw new ApiRequestException("Can not send OTP to user");
+//            }
             User newUser = userMapper.findUserByPhoneNumber(user.getPhoneNumber());
             for (Integer roleID : user.getUserRoles()) {
                 roleService.insertUserRole(roleID, newUser.getUserID());
@@ -149,7 +158,7 @@ public class UserImpl implements UserDetailsService, UserService {
             List<Role> userRoles = roleMapper.findRoleForUser(newUser.getUserID());
             responseUser = new ResponseUser(newUser.getUserID(), newUser.getPhoneNumber(), newUser.getFullName(), newUser.getIdentifyCard(),userRoles, newUser.getBalance(),carDetailList,parkingList);
         } catch (Exception e) {
-            throw new ApiRequestException("Failed to create user: " + e);
+            throw new ApiRequestException("Failed to create user: " + e.getMessage());
         }
         return responseUser;
     }
@@ -167,84 +176,112 @@ public class UserImpl implements UserDetailsService, UserService {
                 Double userWallet = user.getBalance() + Balance;
                 userMapper.updateWalletForUser(userMapper.findUserByPhoneNumber(authentication.getName()).getUserID(),userWallet);
             }else {
-                throw new ApiRequestException("Failed to update wallet for user because responseCode invaid: ");
+                throw new ApiRequestException("Failed to update wallet for user because responseCode invalid");
             }
         }catch (Exception e){
-            throw new ApiRequestException("Failed to update wallet for user: " + e);
+            throw new ApiRequestException("Failed to update wallet for user: " + e.getMessage());
         }
     }
 
     @Override
     public ResponseUser getUserProfile() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String phoneNumber = authentication.getName();
-        User user = findUserByPhoneNumber(phoneNumber);
-        List<ResponseCarDetail> carDetailList = carDetailMapper.findCarDetailByUserID(user.getUserID());
-        List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
-        List<Role> userRoles = roleMapper.findRoleForUser(user.getUserID());
-        ResponseUser responseUser = new ResponseUser(user.getUserID(), user.getPhoneNumber(),user.getFullName(),user.getIdentifyCard(),userRoles,user.getBalance(),carDetailList,parkingList);
-        return responseUser;
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String phoneNumber = authentication.getName();
+            User user = findUserByPhoneNumber(phoneNumber);
+            List<ResponseCarDetail> carDetailList = carDetailMapper.findCarDetailByUserID(user.getUserID());
+            List<ResponseParking> parkingList = parkingMapper.getListParkingByUserID(user.getUserID());
+            List<Role> userRoles = roleMapper.findRoleForUser(user.getUserID());
+            ResponseUser responseUser = new ResponseUser(user.getUserID(), user.getPhoneNumber(), user.getFullName(), user.getIdentifyCard(), userRoles, user.getBalance(), carDetailList, parkingList);
+            return responseUser;
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to get user profile : " + e.getMessage());
+        }
     }
 
     @Override
     public List<UserRole> getRoleByUserID() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String phoneNumber = authentication.getName();
-        return roleService.findRoleByPhoneNumber(phoneNumber);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String phoneNumber = authentication.getName();
+            return roleService.findRoleByPhoneNumber(phoneNumber);
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to get user roles" + e.getMessage());
+        }
     }
 
     @Override
     public ResponseUserRegister findResponseUserRegisterByUserID(int userID) {
-        ResponseUserRegister responseUserRegister = userMapper.findResponseUserRegisterByUserID(userID);
-        List<Role> userRoles = roleMapper.findRoleForUser(userID);
-        responseUserRegister.setRoleName(userRoles);
-        return responseUserRegister;
+        try {
+            ResponseUserRegister responseUserRegister = userMapper.findResponseUserRegisterByUserID(userID);
+            List<Role> userRoles = roleMapper.findRoleForUser(userID);
+            responseUserRegister.setRoleName(userRoles);
+            return responseUserRegister;
+        } catch (Exception e) {
+            throw new ApiRequestException("Failed to find response user register" + e.getMessage());
+        }
     }
+
     @Transactional
     @Override
     public String forgotPassword(RequestForgotPassword requestForgotPassword) throws IOException {
-        User existingUser = userMapper.findUserByPhoneNumber(requestForgotPassword.getPhoneNumber());
-        if(existingUser!=null){
-            ResponseSendOTP responseSendOTP = esmService.sendOTP(requestForgotPassword.getPhoneNumber());
-            if(!responseSendOTP.getCodeResult().equals("100")){
-                throw new ApiRequestException("Can not send OTP to user");
+        try {
+            User existingUser = userMapper.findUserByPhoneNumber(requestForgotPassword.getPhoneNumber());
+            if (existingUser != null) {
+                ResponseSendOTP responseSendOTP = esmService.sendOTP(requestForgotPassword.getPhoneNumber());
+                if (!responseSendOTP.getCodeResult().equals("100")) {
+                    throw new ApiRequestException("Can not send OTP to user");
+                }
+                return "User is exist";
             }
-            return "User is exist";
+            return "This user is not exist";
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to find user with phone number" + e.getMessage());
         }
-        return "This user is not exist";
     }
 
     @Override
     public String confirmPassword(RequestConfirmOTP requestConfirmOTP) throws IOException {
-        ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestConfirmOTP.getPhoneNumber(),requestConfirmOTP.getOTP_code());
-        if(responseCheckOTP.getCodeResult().equalsIgnoreCase("100")){
-            return "Successful";
-        }else {
-            return "OTP code is invalid";
+        try {
+            ResponseCheckOTP responseCheckOTP = esmService.checkOTP(requestConfirmOTP.getPhoneNumber(), requestConfirmOTP.getOTP_code());
+            if (responseCheckOTP.getCodeResult().equalsIgnoreCase("100")) {
+                return "Successful";
+            } else {
+                return "OTP code is invalid";
+            }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to confirm password" + e.getMessage());
         }
     }
 
     @Override
     public String confirmOTP(RequestConfirmOTP RequestConfirmOTP) throws IOException {
-        ResponseCheckOTP responseCheckOTP = esmService.checkOTP(RequestConfirmOTP.getPhoneNumber(),RequestConfirmOTP.getOTP_code());
-        if(responseCheckOTP.getCodeResult().equalsIgnoreCase("100")){
-            User user = userMapper.findUserByPhoneNumber(RequestConfirmOTP.getPhoneNumber());
-            userMapper.updateStatusUser(user.getUserID(),2);
-            return "Successfully";
-        }
-        else {
-            return "OTP code is invalid";
+        try {
+            ResponseCheckOTP responseCheckOTP = esmService.checkOTP(RequestConfirmOTP.getPhoneNumber(), RequestConfirmOTP.getOTP_code());
+            if (responseCheckOTP.getCodeResult().equalsIgnoreCase("100")) {
+                User user = userMapper.findUserByPhoneNumber(RequestConfirmOTP.getPhoneNumber());
+                userMapper.updateStatusUser(user.getUserID(), 2);
+                return "Successfully";
+            } else {
+                return "OTP code is invalid";
+            }
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to confirm OTP" + e.getMessage());
         }
     }
 
     @Override
     public String updateNewPassword(RequestNewPassword password) {
-        User existingUser = userMapper.findUserByPhoneNumber(password.getPhoneNumber());
-        if(existingUser!=null){
-            String passwordEncoded = passwordEncoder.encode(password.getPassword());
-            userMapper.updatePassword(existingUser.getUserID(),passwordEncoded);
-            return "Recover successfully";
+        try {
+            User existingUser = userMapper.findUserByPhoneNumber(password.getPhoneNumber());
+            if (existingUser != null) {
+                String passwordEncoded = passwordEncoder.encode(password.getPassword());
+                userMapper.updatePassword(existingUser.getUserID(), passwordEncoded);
+                return "Recover successfully";
+            }
+            return "This user is not exist";
+        }catch (Exception e){
+            throw new ApiRequestException("Failed to update new password" + e.getMessage());
         }
-        return "This user is not exist";
     }
 }
